@@ -13,20 +13,28 @@ function menu:init()
     self.newGameButton = love.graphics.newImage('assets/new-game-btn.png')
     self.settingsIcon = love.graphics.newImage('assets/settings-icon.png')
     self.exitIcon = love.graphics.newImage('assets/exit-icon.png')
+
     self.settingsIconAngle = 0
     self.exitIconAngle = 0
-    Timer.tween(3, self, {settingsIconAngle = 0.1}, 'linear', function()
-        Timer.tween(3, self, {settingsIconAngle = -0.1}, 'linear')
+
+    self:setupAnimations()
+end
+
+function menu:setupAnimations()
+    Timer.tween(3, self, { settingsIconAngle = 0.1 }, 'linear', function()
+        Timer.tween(3, self, { settingsIconAngle = -0.1 }, 'linear')
     end)
-    Timer.tween(3, self, {exitIconAngle = 0.1}, 'linear', function()
-        Timer.tween(3, self, {exitIconAngle = -0.1}, 'linear')
+
+    Timer.tween(3, self, { exitIconAngle = 0.1 }, 'linear', function()
+        Timer.tween(3, self, { exitIconAngle = -0.1 }, 'linear')
     end)
+
     Timer.every(6, function()
-        Timer.tween(3, self, {settingsIconAngle = 0.1}, 'linear', function()
-            Timer.tween(3, self, {settingsIconAngle = -0.1}, 'linear')
+        Timer.tween(3, self, { settingsIconAngle = 0.1 }, 'linear', function()
+            Timer.tween(3, self, { settingsIconAngle = -0.1 }, 'linear')
         end)
-        Timer.tween(3, self, {exitIconAngle = 0.1}, 'linear', function()
-            Timer.tween(3, self, {exitIconAngle = -0.1}, 'linear')
+        Timer.tween(3, self, { exitIconAngle = 0.1 }, 'linear', function()
+            Timer.tween(3, self, { exitIconAngle = -0.1 }, 'linear')
         end)
     end)
 end

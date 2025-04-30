@@ -8,6 +8,8 @@ local settings = require('states.settings')
 local credits = require('states.credits')
 local pause = require('states.pause')
 
+require('map')
+
 function love.load()
     Gamestate.registerEvents()
     Gamestate.switch(menu)

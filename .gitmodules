@@ -1,0 +1,6 @@
+[submodule "lib/astray"]
+	path = lib/astray
+	url = https://github.com/SiENcE/astray.git
+[submodule "lib/hump"]
+	path = lib/hump
+	url = https://github.com/vrld/hump.git

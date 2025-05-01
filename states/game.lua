@@ -4,6 +4,7 @@ local bump = require('lib.bump.bump')
 
 local map = require('map')
 local Player = require('entities.player')
+local Enemy = require('entities.enemy')
 
 local game = {}
 
@@ -17,28 +18,39 @@ function game:init()
 
     self.world = bump.newWorld()
 
-    local emptyTiles = {}
-    for _, room in ipairs(self.dungeon.rooms) do
-        for y = room.bounds.Y, room.bounds.Y + room.bounds.Height - 1 do
-            for x = room.bounds.X, room.bounds.X + room.bounds.Width - 1 do
-                local tile = self.tiles[y][x]
-                if tile == ' ' then
-                    table.insert(emptyTiles, { x = x, y = y })
-                elseif tile == '#' then
-                    local tileWidth, tileHeight = self.sprites.tile:getDimensions()
-                    self.world:add({ type = 'wall' }, (x - 1) * tileWidth, (y - 1) * tileHeight, tileWidth, tileHeight)
-                end
+    local roomTiles = {}
+    for y = 1, #self.tiles do
+        for x = 1, #self.tiles[y] do
+            local tile = self.tiles[y][x]
+            if tile == ' ' and self:isWithinRoomBounds(x, y) then
+                table.insert(roomTiles, { x = x, y = y })
+            elseif tile == '#' then
+                local tileWidth, tileHeight = self.sprites.tile:getDimensions()
+                self.world:add({ type = 'wall' }, (x - 1) * tileWidth, (y - 1) * tileHeight, tileWidth, tileHeight)
             end
         end
     end
 
-    local randomTile = emptyTiles[love.math.random(#emptyTiles)]
+    local randomTile = roomTiles[love.math.random(#roomTiles)]
     local tileWidth, tileHeight = self.sprites.tile:getDimensions()
     self.player = Player((randomTile.x - 1) * tileWidth, (randomTile.y - 1) * tileHeight, 32, 32)
     self.world:add(self.player, self.player.x, self.player.y, self.player.width, self.player.height)
 
     self.enemies = {}
     self.items = {}
+
+    self.enemyCount = 40
+
+    for i = 1, self.enemyCount do
+        local randomTile
+        repeat
+            randomTile = roomTiles[love.math.random(#roomTiles)]
+        until math.abs(randomTile.x - math.floor(self.player.x / tileWidth) - 1) > 4 or math.abs(randomTile.y - math.floor(self.player.y / tileHeight) - 1) > 4
+
+        local enemy = Enemy((randomTile.x - 1) * tileWidth, (randomTile.y - 1) * tileHeight)
+        table.insert(self.enemies, enemy)
+        self.world:add(enemy, enemy.x, enemy.y, enemy.width, enemy.height)
+    end
 
     self.camera = Camera(self.player.x, self.player.y)
 end
@@ -87,8 +99,11 @@ function game:update(dt)
     end
 
     self.player.x, self.player.y = actualX, actualY
-
     self.camera:lookAt(self.player.x, self.player.y)
+
+    for _, enemy in ipairs(self.enemies) do
+        enemy:update(dt, self.player, self.world)
+    end
 end
 
 function game:draw()
@@ -109,9 +124,20 @@ function game:draw()
     end
 
     self.player:draw()
-    -- Draw enemies and items
+
+    for _, enemy in ipairs(self.enemies) do
+        enemy:draw()
+    end
 
     self.camera:detach()
+end
+
+function game:isWithinRoomBounds(x, y)
+    return self.tiles[y][x - 1] == ' ' and self.tiles[y][x + 1] == ' ' and
+        self.tiles[y - 1][x] == ' ' and self.tiles[y + 1][x] == ' ' and
+        self.tiles[y - 1][x - 1] == ' ' and self.tiles[y - 1][x + 1] == ' ' and
+        self.tiles[y + 1][x - 1] == ' ' and self.tiles[y + 1][x + 1] == ' ' and
+        self.tiles[y][x] == ' '
 end
 
 return game

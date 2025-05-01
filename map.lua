@@ -1,5 +1,4 @@
 local astray = require 'lib.astray.astray'
-local lume = require 'lib.lume.lume'
 
 local M = {}
 
@@ -53,11 +52,6 @@ function M.printTiles(tiles)
         end
         print(line)
     end
-end
-
-function M.printDungeon(dungeon)
-    print(dungeon.rooms)
-    print(lume.serialize(dungeon.rooms))
 end
 
 return M

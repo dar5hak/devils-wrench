@@ -39,17 +39,20 @@ local function generate()
 
     local tiles = generator:CellToTiles(dungeon, symbols)
 
-    -- for y = 0, #tiles[1] do
-    --     local line = ''
-    --     for x = 0, #tiles do
-    --         line = line .. tiles[x][y]
-    --     end
-    --     print(line)
-    -- end
-
     return tiles
 end
 
+local function printTiles(tiles)
+    for y = 0, #tiles[1] do
+        local line = ''
+        for x = 0, #tiles do
+            line = line .. tiles[x][y]
+        end
+        print(line)
+    end
+end
+
 return {
-    generate = generate
+    generate = generate,
+    printTiles = printTiles
 }

@@ -12,7 +12,6 @@ local Player = Class {
     end,
 }
 
-
 function Player:update(dt)
     Entity.update(self, dt)
 end

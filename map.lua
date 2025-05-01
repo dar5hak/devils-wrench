@@ -1,6 +1,9 @@
 local astray = require 'lib.astray.astray'
+local lume = require 'lib.lume.lume'
 
-local function generate()
+local M = {}
+
+function M.generate()
     local mapWidth, mapHeight = 100, 100
     local changeDirectionMod = 10
     local sparsenessMod = 70
@@ -39,10 +42,10 @@ local function generate()
 
     local tiles = generator:CellToTiles(dungeon, symbols)
 
-    return tiles
+    return dungeon, tiles
 end
 
-local function printTiles(tiles)
+function M.printTiles(tiles)
     for y = 0, #tiles[1] do
         local line = ''
         for x = 0, #tiles do
@@ -52,7 +55,9 @@ local function printTiles(tiles)
     end
 end
 
-return {
-    generate = generate,
-    printTiles = printTiles
-}
+function M.printDungeon(dungeon)
+    print(dungeon.rooms)
+    print(lume.serialize(dungeon.rooms))
+end
+
+return M

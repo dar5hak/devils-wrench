@@ -13,19 +13,21 @@ function game:init()
         wall = love.graphics.newImage('assets/wall.png'),
     }
 
-    self.tiles = map.generate()
+    self.dungeon, self.tiles = map.generate()
 
     self.world = bump.newWorld()
 
     local emptyTiles = {}
-    for y = 1, #self.tiles do
-        for x = 1, #self.tiles[y] do
-            local tile = self.tiles[y][x]
-            if tile == ' ' then
-                table.insert(emptyTiles, { x = x, y = y })
-            elseif tile == '#' then
-                local tileWidth, tileHeight = self.sprites.tile:getDimensions()
-                self.world:add({ type = 'wall' }, (x - 1) * tileWidth, (y - 1) * tileHeight, tileWidth, tileHeight)
+    for _, room in ipairs(self.dungeon.rooms) do
+        for y = room.bounds.Y, room.bounds.Y + room.bounds.Height - 1 do
+            for x = room.bounds.X, room.bounds.X + room.bounds.Width - 1 do
+                local tile = self.tiles[y][x]
+                if tile == ' ' then
+                    table.insert(emptyTiles, { x = x, y = y })
+                elseif tile == '#' then
+                    local tileWidth, tileHeight = self.sprites.tile:getDimensions()
+                    self.world:add({ type = 'wall' }, (x - 1) * tileWidth, (y - 1) * tileHeight, tileWidth, tileHeight)
+                end
             end
         end
     end

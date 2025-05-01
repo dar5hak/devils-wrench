@@ -7,3 +7,6 @@
 [submodule "lib/bump"]
 	path = lib/bump
 	url = https://github.com/kikito/bump.lua.git
+[submodule "lib/lume"]
+	path = lib/lume
+	url = https://github.com/rxi/lume.git

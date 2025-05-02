@@ -1,3 +1,6 @@
+local love = require 'love'
+local Gamestate = require 'hump.gamestate'
+
 local pause = {}
 
 function pause:init()

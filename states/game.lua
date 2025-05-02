@@ -74,40 +74,15 @@ function game:update(dt)
         goalX = goalX + self.player.speed * dt
     end
 
-    local actualX, actualY, cols = self.world:move(self.player, goalX, goalY, function(item, other)
-        if other.type == 'wall' then
-            return 'slide'
-        end
-        return nil
-    end)
-
-    -- Allow a margin of error while turning
-    for _, col in ipairs(cols) do
-        if col.other.type == 'wall' then
-            if math.abs(col.touch.x - goalX) <= 6 then
-                actualX = col.touch.x
-            elseif math.abs(col.touch.y - goalY) <= 6 then
-                actualY = col.touch.y
-            end
-        elseif col.other.type == 'enemy' then
-            Gamestate.switch(gameover)
-            return
-        end
+    -- Update player movement and check for collisions
+    if not self.player:move(goalX, goalY, dt, self.world) then
+        Gamestate.switch(gameover)
+        return
     end
 
-    -- Snap player to grid for smoother movement
-    local tileWidth, tileHeight = self.sprites.tile:getDimensions()
-    if love.keyboard.isDown('up') or love.keyboard.isDown('down') then
-        actualX = math.floor((actualX + tileWidth / 2) / tileWidth) * tileWidth
-    elseif love.keyboard.isDown('left') or love.keyboard.isDown('right') then
-        actualY = math.floor((actualY + tileHeight / 2) / tileHeight) * tileHeight
-    end
-
-    self.player.x, self.player.y = actualX, actualY
-    self.camera:lookAt(self.player.x, self.player.y)
-
+    -- Update enemies
     for _, enemy in ipairs(self.enemies) do
-        enemy:update(dt)
+        enemy:move(dt, self.world)
         if self.world:hasItem(enemy) then
             local ex, ey, ew, eh = self.world:getRect(enemy)
             local px, py, pw, ph = self.world:getRect(self.player)
@@ -117,6 +92,9 @@ function game:update(dt)
             end
         end
     end
+
+    -- Update camera position
+    self.camera:lookAt(self.player.x, self.player.y)
 end
 
 function game:draw()

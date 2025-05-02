@@ -14,8 +14,10 @@ local Enemy = Class {
 
 function Enemy:update(dt)
     Entity.update(self, dt)
+    self:move(dt)
+end
 
-    -- Smooth movement logic with speed adjustment
+function Enemy:move(dt, world)
     if not self.targetPosition then
         local directions = {
             { x = 1,  y = 0 }, -- Right
@@ -49,6 +51,8 @@ function Enemy:update(dt)
             self.targetPosition = nil
         end
     end
+
+    world:update(self, self.x, self.y)
 end
 
 function Enemy:draw()

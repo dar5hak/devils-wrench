@@ -1,6 +1,8 @@
 local love = require('love')
 local Camera = require('lib.hump.camera')
 local bump = require('lib.bump.bump')
+local Gamestate = require('lib.hump.gamestate')
+local gameover = require('states.gameover')
 
 local map = require('map')
 local Player = require('entities.player')
@@ -87,6 +89,9 @@ function game:update(dt)
             elseif math.abs(col.touch.y - goalY) <= 6 then
                 actualY = col.touch.y
             end
+        elseif col.other.type == 'enemy' then
+            Gamestate.switch(gameover)
+            return
         end
     end
 
@@ -103,6 +108,14 @@ function game:update(dt)
 
     for _, enemy in ipairs(self.enemies) do
         enemy:update(dt, self.player, self.world)
+        if self.world:hasItem(enemy) then
+            local ex, ey, ew, eh = self.world:getRect(enemy)
+            local px, py, pw, ph = self.world:getRect(self.player)
+            if ex < px + pw and ex + ew > px and ey < py + ph and ey + eh > py then
+                Gamestate.switch(gameover)
+                return
+            end
+        end
     end
 end
 

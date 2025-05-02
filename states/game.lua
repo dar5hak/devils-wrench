@@ -107,7 +107,7 @@ function game:update(dt)
     self.camera:lookAt(self.player.x, self.player.y)
 
     for _, enemy in ipairs(self.enemies) do
-        enemy:update(dt, self.player, self.world)
+        enemy:update(dt)
         if self.world:hasItem(enemy) then
             local ex, ey, ew, eh = self.world:getRect(enemy)
             local px, py, pw, ph = self.world:getRect(self.player)

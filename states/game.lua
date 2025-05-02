@@ -7,6 +7,7 @@ local gameover = require('states.gameover')
 local map = require('map')
 local Player = require('entities.player')
 local Enemy = require('entities.enemy')
+local Portal = require('entities.portal')
 
 local game = {}
 
@@ -37,6 +38,11 @@ function game:init()
     local tileWidth, tileHeight = self.sprites.tile:getDimensions()
     self.player = Player((randomTile.x - 1) * tileWidth, (randomTile.y - 1) * tileHeight, 32, 32)
     self.world:add(self.player, self.player.x, self.player.y, self.player.width, self.player.height)
+
+    -- Add portal to a random room tile
+    local portalTile = roomTiles[love.math.random(#roomTiles)]
+    self.portal = Portal((portalTile.x - 1) * tileWidth, (portalTile.y - 1) * tileHeight)
+    self.world:add(self.portal, self.portal.x, self.portal.y, self.portal.width, self.portal.height)
 
     self.enemies = {}
     self.items = {}
@@ -80,6 +86,14 @@ function game:update(dt)
         return
     end
 
+    -- Check if player reaches the portal
+    local px, py, pw, ph = self.world:getRect(self.player)
+    local portalX, portalY, portalW, portalH = self.world:getRect(self.portal)
+    if px < portalX + portalW and px + pw > portalX and py < portalY + portalH and py + ph > portalY then
+        Gamestate.switch(require('states.victory'))
+        return
+    end
+
     -- Update enemies
     for _, enemy in ipairs(self.enemies) do
         enemy:move(dt, self.world)
@@ -115,6 +129,7 @@ function game:draw()
     end
 
     self.player:draw()
+    self.portal:draw()
 
     for _, enemy in ipairs(self.enemies) do
         enemy:draw()

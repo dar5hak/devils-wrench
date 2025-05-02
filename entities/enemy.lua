@@ -44,8 +44,24 @@ function Enemy:move(dt, world)
         if math.abs(moveX) > math.abs(dx) then moveX = dx end
         if math.abs(moveY) > math.abs(dy) then moveY = dy end
 
-        self.x = self.x + moveX
-        self.y = self.y + moveY
+        local goalX = self.x + moveX
+        local goalY = self.y + moveY
+
+        local actualX, actualY, cols = world:move(self, goalX, goalY, function(item, other)
+            if other.type == 'wall' then
+                return 'slide'
+            end
+            return nil
+        end)
+
+        for _, col in ipairs(cols) do
+            if col.other.type == 'wall' then
+                self.targetPosition = nil -- Change direction on wall collision
+                return
+            end
+        end
+
+        self.x, self.y = actualX, actualY
 
         if self.x == self.targetPosition.x and self.y == self.targetPosition.y then
             self.targetPosition = nil

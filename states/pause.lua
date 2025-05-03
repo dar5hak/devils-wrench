@@ -1,5 +1,5 @@
-local love = require 'love'
-local Gamestate = require 'hump.gamestate'
+local love = require('love')
+local Gamestate = require('lib.hump.gamestate')
 
 local pause = {}
 

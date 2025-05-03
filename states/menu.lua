@@ -14,6 +14,8 @@ function menu:init()
     self.settingsIcon = love.graphics.newImage('assets/settings-icon.png')
     self.exitIcon = love.graphics.newImage('assets/exit-icon.png')
 
+    self.titleMusic = love.audio.newSource('assets/HaroldParanormalInstigatorTheme_Loopable.ogg', 'stream')
+
     self.settingsIconAngle = 0
     self.exitIconAngle = 0
 
@@ -42,6 +44,7 @@ end
 function menu:enter(previous)
     self.buttonAngle = 0
     Timer.tween(1, self, { buttonAngle = math.pi / 12 }, 'bounce')
+    love.audio.play(self.titleMusic)
 end
 
 function menu:update(dt)
@@ -63,6 +66,7 @@ end
 
 function menu:keyreleased(key)
     if key == 'return' then
+        love.audio.stop(self.titleMusic)
         Gamestate.switch(game)
     end
 end

@@ -16,6 +16,10 @@ local Portal = require('entities.portal')
 local game = {}
 
 function game:init()
+    self.transitioningToVictory = false
+    self.transitionTimer = 0
+    self.gameMusic = love.audio.newSource('assets/MeltdownTheme_Loopable.ogg', 'stream')
+
     self.sprites = {
         tile = love.graphics.newImage('assets/tile.png'),
         wall = love.graphics.newImage('assets/wall.png'),
@@ -68,7 +72,11 @@ function game:init()
 end
 
 function game:enter(previous)
-    -- Logic to run when entering the game state
+    if previous == pause then
+        love.audio.resume(self.gameMusic)
+    else
+        love.audio.play(self.gameMusic)
+    end
 end
 
 function game:update(dt)

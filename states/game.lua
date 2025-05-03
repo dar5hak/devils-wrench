@@ -92,7 +92,6 @@ function game:update(dt)
     -- Handle transition to victory
     if self.transitioningToVictory then
         self.transitionTimer = self.transitionTimer + dt
-        print('Timer: ' .. self.transitionTimer .. ' seconds, ' .. dt .. ' delta time')
         if self.transitionTimer < 1 then
             -- Wait for a second
         elseif self.transitionTimer < 2 then

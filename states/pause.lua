@@ -23,7 +23,7 @@ function pause:draw()
 end
 
 function pause:keypressed(key)
-    if key == 'p' then
+    if key == 'space' then
         Gamestate.pop()
     end
 end

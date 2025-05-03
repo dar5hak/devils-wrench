@@ -3,10 +3,12 @@ local Camera = require('lib.hump.camera')
 local bump = require('lib.bump.bump')
 local Gamestate = require('lib.hump.gamestate')
 
+local map = require('map')
+
 local victory = require('states.victory')
 local gameover = require('states.gameover')
+local pause = require('states.pause')
 
-local map = require('map')
 local Player = require('entities.player')
 local Enemy = require('entities.enemy')
 local Portal = require('entities.portal')
@@ -154,6 +156,12 @@ function game:draw()
     end
 
     self.camera:detach()
+end
+
+function game:keypressed(key)
+    if key == 'space' then
+        Gamestate.push(pause)
+    end
 end
 
 function game:isWithinRoomBounds(x, y)

@@ -2,6 +2,8 @@ local love = require('love')
 local Camera = require('lib.hump.camera')
 local bump = require('lib.bump.bump')
 local Gamestate = require('lib.hump.gamestate')
+
+local victory = require('states.victory')
 local gameover = require('states.gameover')
 
 local map = require('map')
@@ -68,6 +70,30 @@ function game:enter(previous)
 end
 
 function game:update(dt)
+    -- Check if player reaches the portal
+    local px, py, pw, ph = self.world:getRect(self.player)
+    local portalX, portalY, portalW, portalH = self.world:getRect(self.portal)
+    if not self.transitioningToVictory and px < portalX + portalW and px + pw > portalX and py < portalY + portalH and py + ph > portalY then
+        self.transitioningToVictory = true
+        self.transitionTimer = 0
+        self.player:move(portalX, portalY, dt, self.world)
+    end
+
+    -- Handle transition to victory
+    if self.transitioningToVictory then
+        self.transitionTimer = self.transitionTimer + dt
+        print('Timer: ' .. self.transitionTimer .. ' seconds, ' .. dt .. ' delta time')
+        if self.transitionTimer < 1 then
+            -- Wait for a second
+        elseif self.transitionTimer < 2 then
+            self.player.y = self.player.y - 100 * dt
+        else
+            Gamestate.switch(victory)
+        end
+        return
+    end
+
+    -- Handle player movement
     local goalX, goalY = self.player.x, self.player.y
 
     if love.keyboard.isDown('up') then
@@ -83,14 +109,6 @@ function game:update(dt)
     -- Update player movement and check for collisions
     if not self.player:move(goalX, goalY, dt, self.world) then
         Gamestate.switch(gameover)
-        return
-    end
-
-    -- Check if player reaches the portal
-    local px, py, pw, ph = self.world:getRect(self.player)
-    local portalX, portalY, portalW, portalH = self.world:getRect(self.portal)
-    if px < portalX + portalW and px + pw > portalX and py < portalY + portalH and py + ph > portalY then
-        Gamestate.switch(require('states.victory'))
         return
     end
 

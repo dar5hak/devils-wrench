@@ -79,6 +79,7 @@ function menu:mousepressed(x, y, button)
         local newGameButtonX = (love.graphics.getWidth() - self.newGameButton:getWidth()) / 2
         local newGameButtonY = 348
         if x >= newGameButtonX and x <= newGameButtonX + self.newGameButton:getWidth() and y >= newGameButtonY and y <= newGameButtonY + self.newGameButton:getHeight() then
+            love.audio.stop(self.titleMusic)
             Gamestate.switch(game)
         end
 

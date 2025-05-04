@@ -8,6 +8,7 @@ local settings = require('states.settings')
 local menu = {}
 
 function menu:init()
+    self.background = love.graphics.newImage('assets/background.png')
     self.title = love.graphics.newImage('assets/title.png')
     self.newGameButtonBg = love.graphics.newImage('assets/new-game-btn-bg.png')
     self.newGameButton = love.graphics.newImage('assets/new-game-btn.png')
@@ -52,6 +53,8 @@ function menu:update(dt)
 end
 
 function menu:draw()
+    love.graphics.draw(self.background, 0, 0)
+
     local screenWidth = love.graphics.getDimensions()
     local newGameButtonX = (screenWidth - self.newGameButton:getWidth()) / 2
 

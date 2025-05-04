@@ -3,6 +3,7 @@ local love = require('love')
 local settings = {}
 
 function settings:init()
+    self.background = love.graphics.newImage('assets/background.png')
     self.heading = love.graphics.newImage('assets/settings-heading.png')
 
     self.keySettings = {
@@ -25,15 +26,13 @@ function settings:update(dt)
 end
 
 function settings:draw()
+    love.graphics.draw(self.background, 0, 0)
+
     local screenWidth, screenHeight = love.graphics.getDimensions()
     local headingX = (screenWidth - self.heading:getWidth()) / 2
     local headingY = 58
     local saveBtnX = (screenWidth - self.saveBtn:getWidth()) / 2
     local saveBtnY = screenHeight - self.saveBtn:getHeight() - 40
-
-    print(love.graphics.getDimensions())
-    print(self.saveBtn:getWidth(), self.saveBtn:getHeight())
-    print(saveBtnX, saveBtnY)
 
     love.graphics.draw(self.heading, headingX, headingY)
 

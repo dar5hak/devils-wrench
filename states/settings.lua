@@ -1,4 +1,5 @@
 local love = require('love')
+local Gamestate = require('lib.hump.gamestate')
 
 local settings = {}
 
@@ -44,6 +45,19 @@ function settings:draw()
     love.graphics.draw(self.zoom2, 350, 357)
     love.graphics.draw(self.zoom3, 550, 338)
     love.graphics.draw(self.saveBtn, saveBtnX, saveBtnY, -0.14)
+end
+
+function settings:mousepressed(x, y, button)
+    if button == 1 then
+        local screenWidth, screenHeight = love.graphics.getDimensions()
+        local saveBtnX = (screenWidth - self.saveBtn:getWidth()) / 2
+        local saveBtnY = screenHeight - self.saveBtn:getHeight() - 40
+
+        if x >= saveBtnX and x <= saveBtnX + self.saveBtn:getWidth() and
+            y >= saveBtnY and y <= saveBtnY + self.saveBtn:getHeight() then
+            Gamestate.pop()
+        end
+    end
 end
 
 return settings

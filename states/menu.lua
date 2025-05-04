@@ -86,7 +86,7 @@ function menu:mousepressed(x, y, button)
         local settingsIconX = 666 - self.settingsIcon:getWidth() / 2
         local settingsIconY = 541 - self.settingsIcon:getHeight() / 2
         if x >= settingsIconX and x <= settingsIconX + self.settingsIcon:getWidth() and y >= settingsIconY and y <= settingsIconY + self.settingsIcon:getHeight() then
-            Gamestate.switch(settings)
+            Gamestate.push(settings)
         end
 
         local exitIconX = 750 - self.exitIcon:getWidth() / 2

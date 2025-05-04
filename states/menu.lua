@@ -16,6 +16,8 @@ function menu:init()
     self.exitIcon = love.graphics.newImage('assets/exit-icon.png')
 
     self.titleMusic = love.audio.newSource('assets/HaroldParanormalInstigatorTheme_Loopable.ogg', 'stream')
+    self.titleMusic:setVolume(0.5)
+    self.titleMusic:setLooping(true)
 
     self.settingsIconAngle = 0
     self.exitIconAngle = 0

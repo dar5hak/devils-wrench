@@ -19,6 +19,8 @@ function game:init()
     self.transitioningToVictory = false
     self.transitionTimer = 0
     self.gameMusic = love.audio.newSource('assets/MeltdownTheme_Loopable.ogg', 'stream')
+    self.gameMusic:setVolume(0.5)
+    self.gameMusic:setLooping(true)
 
     self.sprites = {
         tile = love.graphics.newImage('assets/tile.png'),

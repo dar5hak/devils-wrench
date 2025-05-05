@@ -77,9 +77,9 @@ end
 
 function game:enter(previous)
     if previous == pause then
-        love.audio.resume(self.gameMusic)
+        self.gameMusic:resume()
     else
-        love.audio.play(self.gameMusic)
+        self.gameMusic:play()
     end
 end
 
@@ -101,6 +101,7 @@ function game:update(dt)
         elseif self.transitionTimer < 2 then
             self.player.y = self.player.y - 100 * dt
         else
+            self.gameMusic:stop()
             Gamestate.switch(victory)
         end
         return
@@ -123,6 +124,7 @@ function game:update(dt)
 
     -- Update player movement and check for collisions
     if not self.player:move(goalX, goalY, dt, self.world) then
+        self.gameMusic:stop()
         Gamestate.switch(gameover)
         return
     end
@@ -134,6 +136,7 @@ function game:update(dt)
             local ex, ey, ew, eh = self.world:getRect(enemy)
             local px, py, pw, ph = self.world:getRect(self.player)
             if ex < px + pw and ex + ew > px and ey < py + ph and ey + eh > py then
+                self.gameMusic:stop()
                 Gamestate.switch(gameover)
                 return
             end
@@ -174,6 +177,7 @@ end
 
 function game:keypressed(key)
     if key == 'space' then
+        self.gameMusic:pause()
         Gamestate.push(pause)
     end
 end

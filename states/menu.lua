@@ -47,7 +47,11 @@ end
 function menu:enter(previous)
     self.buttonAngle = 0
     Timer.tween(1, self, { buttonAngle = math.pi / 12 }, 'bounce')
-    love.audio.play(self.titleMusic)
+    self.titleMusic:play()
+end
+
+function menu:resume()
+    self.titleMusic:play()
 end
 
 function menu:update(dt)
@@ -71,8 +75,8 @@ end
 
 function menu:keyreleased(key)
     if key == 'return' then
-        love.audio.stop(self.titleMusic)
-        Gamestate.switch(game)
+        self.titleMusic:stop()
+        Gamestate.push(game)
     end
 end
 
@@ -81,8 +85,8 @@ function menu:mousepressed(x, y, button)
         local newGameButtonX = (love.graphics.getWidth() - self.newGameButton:getWidth()) / 2
         local newGameButtonY = 348
         if x >= newGameButtonX and x <= newGameButtonX + self.newGameButton:getWidth() and y >= newGameButtonY and y <= newGameButtonY + self.newGameButton:getHeight() then
-            love.audio.stop(self.titleMusic)
-            Gamestate.switch(game)
+            self.titleMusic:stop()
+            Gamestate.push(game)
         end
 
         local settingsIconX = 666 - self.settingsIcon:getWidth() / 2

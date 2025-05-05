@@ -1,6 +1,8 @@
 local love = require('love')
 local Gamestate = require('lib.hump.gamestate')
 
+local settingsManager = require('settingsManager')
+
 local settings = {}
 
 function settings:init()
@@ -8,23 +10,6 @@ function settings:init()
     self.heading = love.graphics.newImage('assets/settings-heading.png')
     self.keySelectionBox = love.graphics.newImage('assets/key-selection-box.png')
     self.zoomSelectionBox = love.graphics.newImage('assets/zoom-selection-box.png')
-
-    self.keySettings = {
-        arrows = { x = 132, y = 188, image = love.graphics.newImage('assets/keys-arrows.png') },
-        wasd = { x = 332, y = 188, image = love.graphics.newImage('assets/keys-wasd.png') },
-        vim = { x = 532, y = 188, image = love.graphics.newImage('assets/keys-vim.png') },
-    }
-
-    self.zoomSettings = {
-        zoom1 = { x = 172, y = 357, image = love.graphics.newImage('assets/zoom-1.png') },
-        zoom2 = { x = 350, y = 357, image = love.graphics.newImage('assets/zoom-2.png') },
-        zoom3 = { x = 550, y = 338, image = love.graphics.newImage('assets/zoom-3.png') },
-    }
-
-    self.currentSettings = {
-        key = self.keySettings.arrows,
-        zoom = self.zoomSettings.zoom1,
-    }
 
     self.saveBtn = love.graphics.newImage('assets/save-btn.png')
 end
@@ -48,18 +33,23 @@ function settings:draw()
 
     love.graphics.draw(self.heading, headingX, headingY)
 
-    love.graphics.draw(self.keySelectionBox,
-        self.currentSettings.key.x + (self.currentSettings.key.image:getWidth() - self.keySelectionBox:getWidth()) / 2,
-        self.currentSettings.key.y + (self.currentSettings.key.image:getHeight() - self.keySelectionBox:getHeight()) / 2)
-    love.graphics.draw(self.zoomSelectionBox,
-        self.currentSettings.zoom.x + (self.currentSettings.zoom.image:getWidth() - self.zoomSelectionBox:getWidth()) / 2,
-        self.currentSettings.zoom.y + (self.currentSettings.zoom.image:getHeight() - self.zoomSelectionBox:getHeight()) / 2)
+    local keySetting = settingsManager.currentSettings.key
+    local zoomSetting = settingsManager.currentSettings.zoom
 
-    for _, keySetting in pairs(self.keySettings) do
+    love.graphics.draw(self.keySelectionBox,
+        keySetting.x + (keySetting.image:getWidth() - self.keySelectionBox:getWidth()) / 2,
+        keySetting.y + (keySetting.image:getHeight() - self.keySelectionBox:getHeight()) / 2)
+
+    love.graphics.draw(self.zoomSelectionBox,
+        zoomSetting.x + (zoomSetting.image:getWidth() - self.zoomSelectionBox:getWidth()) / 2,
+        zoomSetting.y +
+        (zoomSetting.image:getHeight() - self.zoomSelectionBox:getHeight()) / 2)
+
+    for _, keySetting in pairs(settingsManager.keySettings) do
         love.graphics.draw(keySetting.image, keySetting.x, keySetting.y)
     end
 
-    for _, zoomSetting in pairs(self.zoomSettings) do
+    for _, zoomSetting in pairs(settingsManager.zoomSettings) do
         love.graphics.draw(zoomSetting.image, zoomSetting.x, zoomSetting.y)
     end
 
@@ -79,17 +69,17 @@ function settings:mousepressed(x, y, button)
         end
     end
 
-    for _, keySetting in pairs(self.keySettings) do
+    for _, keySetting in pairs(settingsManager.keySettings) do
         if x >= keySetting.x and x <= keySetting.x + keySetting.image:getWidth() and
             y >= keySetting.y and y <= keySetting.y + keySetting.image:getHeight() then
-            self.currentSettings.key = keySetting
+            settingsManager.currentSettings.key = keySetting
         end
     end
 
-    for _, zoomSetting in pairs(self.zoomSettings) do
+    for _, zoomSetting in pairs(settingsManager.zoomSettings) do
         if x >= zoomSetting.x and x <= zoomSetting.x + zoomSetting.image:getWidth() and
             y >= zoomSetting.y and y <= zoomSetting.y + zoomSetting.image:getHeight() then
-            self.currentSettings.zoom = zoomSetting
+            settingsManager.currentSettings.zoom = zoomSetting
         end
     end
 end

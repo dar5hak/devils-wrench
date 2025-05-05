@@ -13,6 +13,8 @@ local Player = require('entities.player')
 local Enemy = require('entities.enemy')
 local Portal = require('entities.portal')
 
+local settingsManager = require('settingsManager')
+
 local game = {}
 
 function game:init()
@@ -107,13 +109,15 @@ function game:update(dt)
     -- Handle player movement
     local goalX, goalY = self.player.x, self.player.y
 
-    if love.keyboard.isDown('up') then
+    local upKey, downKey, leftKey, rightKey = settingsManager.currentSettings.key.up, settingsManager.currentSettings.key.down, settingsManager.currentSettings.key.left, settingsManager.currentSettings.key.right
+
+    if love.keyboard.isDown(upKey) then
         goalY = goalY - self.player.speed * dt
-    elseif love.keyboard.isDown('down') then
+    elseif love.keyboard.isDown(downKey) then
         goalY = goalY + self.player.speed * dt
-    elseif love.keyboard.isDown('left') then
+    elseif love.keyboard.isDown(leftKey) then
         goalX = goalX - self.player.speed * dt
-    elseif love.keyboard.isDown('right') then
+    elseif love.keyboard.isDown(rightKey) then
         goalX = goalX + self.player.speed * dt
     end
 
@@ -138,6 +142,7 @@ function game:update(dt)
 
     -- Update camera position
     self.camera:lookAt(self.player.x, self.player.y)
+    self.camera:zoomTo(settingsManager.currentSettings.zoom.scale)
 end
 
 function game:draw()

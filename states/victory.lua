@@ -1,9 +1,12 @@
 local love = require('love')
+local Gamestate = require('lib.hump.gamestate')
 
 local victory = {}
 
 function victory:init()
-    -- Initialization logic for the victory state
+    self.background = love.graphics.newImage('assets/victory-bg.png')
+    self.text = love.graphics.newImage('assets/victory-text.png')
+    self.menuBtn = love.graphics.newImage('assets/victory-menu-btn.png')
 end
 
 function victory:enter(previous)
@@ -15,13 +18,32 @@ function victory:update(dt)
 end
 
 function victory:draw()
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.printf('VICTORY!', 0, love.graphics.getHeight() / 2, love.graphics.getWidth(), 'center')
+    love.graphics.draw(self.background, 0, 0)
+
+    local screenWidth, screenHeight = love.graphics.getDimensions()
+    local textX = (screenWidth - self.text:getWidth()) / 2
+    local textY = (screenHeight - self.text:getHeight()) / 2
+    local menuBtnX = (screenWidth - self.menuBtn:getWidth()) / 2
+    local menuBtnY = 480
+
+    love.graphics.draw(self.text, textX, textY)
+    love.graphics.draw(self.menuBtn, menuBtnX, menuBtnY)
 end
 
-function victory:keypressed(key)
+function victory:keyreleased(key)
     if key == 'return' then
-        love.event.quit()
+        Gamestate.pop()
+    end
+end
+
+function victory:mousepressed(x, y, button)
+    local screenWidth, screenHeight = love.graphics.getDimensions()
+    local menuBtnX = (screenWidth - self.menuBtn:getWidth()) / 2
+    local menuBtnY = 480
+
+    if button == 1 and x >= menuBtnX and x <= menuBtnX + self.menuBtn:getWidth() and
+       y >= menuBtnY and y <= menuBtnY + self.menuBtn:getHeight() then
+        Gamestate.pop()
     end
 end
 

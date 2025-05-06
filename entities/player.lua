@@ -3,6 +3,8 @@ local Class = require('lib.hump.class')
 
 local Entity = require('entities.entity')
 
+local settingsManager = require('settingsManager')
+
 local Player = Class {
     __includes = Entity,
     sprite = love.graphics.newImage('assets/player.png'),
@@ -45,9 +47,9 @@ function Player:move(goalX, goalY, dt, world)
 
     -- Snap player to grid for smoother movement
     local tileWidth, tileHeight = self.sprite:getDimensions()
-    if love.keyboard.isDown('up') or love.keyboard.isDown('down') then
+    if love.keyboard.isDown(settingsManager.currentSettings.key.up) or love.keyboard.isDown(settingsManager.currentSettings.key.down) then
         actualX = math.floor((actualX + tileWidth / 2) / tileWidth) * tileWidth
-    elseif love.keyboard.isDown('left') or love.keyboard.isDown('right') then
+    elseif love.keyboard.isDown(settingsManager.currentSettings.key.left) or love.keyboard.isDown(settingsManager.currentSettings.key.right) then
         actualY = math.floor((actualY + tileHeight / 2) / tileHeight) * tileHeight
     end
 

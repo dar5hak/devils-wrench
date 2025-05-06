@@ -20,6 +20,11 @@ local game = {}
 function game:enter()
     self.transitioningToVictory = false
     self.transitionTimer = 0
+
+    self.timeElapsed = 0
+    self.lastRandomize = 0
+    self.randomizeInterval = 30
+
     self.gameMusic = love.audio.newSource('assets/MeltdownTheme_Loopable.ogg', 'stream')
     self.gameMusic:setVolume(0.5)
     self.gameMusic:setLooping(true)
@@ -81,6 +86,13 @@ function game:resume(previous)
 end
 
 function game:update(dt)
+    self.timeElapsed = self.timeElapsed + dt
+
+    if self.timeElapsed - self.lastRandomize >= self.randomizeInterval then
+        settingsManager.randomizeSettings()
+        self.lastRandomize = self.timeElapsed
+    end
+
     -- Check if player reaches the portal
     local px, py, pw, ph = self.world:getRect(self.player)
     local portalX, portalY, portalW, portalH = self.world:getRect(self.portal)

@@ -17,12 +17,13 @@ local settingsManager = require('settingsManager')
 
 local game = {}
 
-function game:init()
+function game:enter()
     self.transitioningToVictory = false
     self.transitionTimer = 0
     self.gameMusic = love.audio.newSource('assets/MeltdownTheme_Loopable.ogg', 'stream')
     self.gameMusic:setVolume(0.5)
     self.gameMusic:setLooping(true)
+    self.gameMusic:play()
 
     self.sprites = {
         tile = love.graphics.newImage('assets/tile.png'),
@@ -75,12 +76,8 @@ function game:init()
     self.camera = Camera(self.player.x, self.player.y)
 end
 
-function game:enter(previous)
-    if previous == pause then
-        self.gameMusic:resume()
-    else
-        self.gameMusic:play()
-    end
+function game:resume(previous)
+    self.gameMusic:play()
 end
 
 function game:update(dt)
@@ -110,7 +107,9 @@ function game:update(dt)
     -- Handle player movement
     local goalX, goalY = self.player.x, self.player.y
 
-    local upKey, downKey, leftKey, rightKey = settingsManager.currentSettings.key.up, settingsManager.currentSettings.key.down, settingsManager.currentSettings.key.left, settingsManager.currentSettings.key.right
+    local upKey, downKey, leftKey, rightKey = settingsManager.currentSettings.key.up,
+        settingsManager.currentSettings.key.down, settingsManager.currentSettings.key.left,
+        settingsManager.currentSettings.key.right
 
     if love.keyboard.isDown(upKey) then
         goalY = goalY - self.player.speed * dt

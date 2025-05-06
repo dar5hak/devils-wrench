@@ -79,6 +79,18 @@ function game:enter()
     end
 
     self.camera = Camera(self.player.x, self.player.y)
+
+    self.toast = {
+        message = nil,
+        timer = 0,
+        duration = 5,
+        font = love.graphics.newFont(24),
+    }
+end
+
+function game:showToast(message)
+    self.toast.message = message
+    self.toast.timer = self.toast.duration
 end
 
 function game:resume(previous)
@@ -88,9 +100,19 @@ end
 function game:update(dt)
     self.timeElapsed = self.timeElapsed + dt
 
+    -- Check if the randomize interval has passed
     if self.timeElapsed - self.lastRandomize >= self.randomizeInterval then
         settingsManager.randomizeSettings()
+        self:showToast("Settings updated")
         self.lastRandomize = self.timeElapsed
+    end
+
+    -- Update the toast timer and remove the message if it has expired
+    if self.toast.timer > 0 then
+        self.toast.timer = self.toast.timer - dt
+        if self.toast.timer <= 0 then
+            self.toast.message = nil
+        end
     end
 
     -- Check if player reaches the portal
@@ -184,6 +206,16 @@ function game:draw()
     end
 
     self.camera:detach()
+
+    -- Draw toast message if active
+    if self.toast.message then
+        love.graphics.setColor(0, 0, 0, 0.7) -- Background color (semi-transparent black)
+        love.graphics.rectangle("fill", love.graphics.getWidth() - 300, love.graphics.getHeight() - 80, 280, 60)
+        love.graphics.setColor(1, 1, 1, 1)   -- Text color (white)
+        love.graphics.setFont(self.toast.font)
+        love.graphics.printf(self.toast.message, love.graphics.getWidth() - 300, love.graphics.getHeight() - 64, 280,
+            "center")
+    end
 end
 
 function game:keypressed(key)

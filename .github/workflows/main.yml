@@ -58,7 +58,7 @@ jobs:
         uses: love-actions/love-actions-linux@v2
         with:
           app-name: The Devil’s Wrench
-          bundle-id: com.example.thedevilswrench
+          bundle-id: com.weredroid.thedevilswrench
           description: A plain old dungeon crawler… or is it?
           version-string: "1.0.0"
           icon-path: ./assets/title.png

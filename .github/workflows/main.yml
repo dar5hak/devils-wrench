@@ -1,9 +1,8 @@
-name: Build Linux Package
+name: Build Package
 
 on:
   push:
     branches: [main, ci*]
-    tags: [pre*, v*]
   pull_request:
     branches: [main]
 
@@ -14,6 +13,7 @@ env:
 
 jobs:
   build-core:
+    name: Build Core
     runs-on: ubuntu-latest
     env:
       OUTPUT_FOLDER: ./build
@@ -35,6 +35,7 @@ jobs:
           path: ${{ env.CORE_LOVE_PACKAGE_PATH }}
 
   build-linux:
+    name: Build Linux
     runs-on: ubuntu-latest
     needs: build-core
 
@@ -72,3 +73,41 @@ jobs:
         with:
           name: TheDevilsWrench_Linux_AppImage
           path: ./build/TheDevilsWrench.AppImage
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    needs: build-core
+
+    env:
+      OUTPUT_FOLDER: ${{ github.workspace }}/build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Download core love package
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.CORE_LOVE_ARTIFACT_NAME }}
+
+      - name: Build Windows packages
+        id: build-packages
+        uses: love-actions/love-actions-windows@v1
+        with:
+          love-package: ${{ env.CORE_LOVE_PACKAGE_PATH }}
+          icon-path: ./assets/title.png
+          rc-path: ./assets/windows/template.rc
+          product-name: TheDevilsWrench
+          app-id: ${{ secrets.APP_ID }}
+          project-website: https://www.example.com
+          installer-languages: English.isl
+          output-folder: ${{ env.OUTPUT_FOLDER }}
+
+      - name: Upload 64-bit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TheDevilsWrench_Windows_x64
+          path: ${{ env.OUTPUT_FOLDER }}/TheDevilsWrench_x64.zip

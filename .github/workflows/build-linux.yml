@@ -1,0 +1,35 @@
+name: Build Linux Package
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build Linux packages
+        id: build-packages
+        uses: love-actions/love-actions-linux@v2
+        with:
+          app-name: The Devil’s Wrench
+          bundle-id: com.example.thedevilswrench
+          description: A plain old dungeon crawler… or is it?
+          version-string: "1.0.0"
+          icon-path: ./assets/title.png
+          love-package: ./game.love
+          lib-path: ./lib
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TheDevilsWrench_Linux_AppImage
+          path: ./build/TheDevilsWrench.AppImage

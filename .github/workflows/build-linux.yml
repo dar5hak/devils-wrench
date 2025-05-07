@@ -2,11 +2,36 @@ name: Build Linux Package
 
 on:
   push:
-    branches:
-      - main
+    branches: [main, ci*]
+    tags: [pre*, v*]
   pull_request:
+    branches: [main]
+
+env:
+  BUILD_ASSETS_FOLDER: ./.github/build
+  CORE_LOVE_ARTIFACT_NAME: core_love_package
+  CORE_LOVE_PACKAGE_PATH: ./core.love
 
 jobs:
+  build-core:
+    runs-on: ubuntu-latest
+    env:
+      OUTPUT_FOLDER: ./build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Build core love package
+        uses: love-actions/love-actions-core@v1
+        with:
+          build-list: ./assets/ ./lib/ **/*.lua
+          package-path: ${{ env.CORE_LOVE_PACKAGE_PATH }}
+      - name: Upload core love package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.CORE_LOVE_ARTIFACT_NAME }}
+          path: ${{ env.CORE_LOVE_PACKAGE_PATH }}
+
   build-linux:
     runs-on: ubuntu-latest
 

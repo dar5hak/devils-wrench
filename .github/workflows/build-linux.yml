@@ -62,6 +62,7 @@ jobs:
           love-package: ${{ env.CORE_LOVE_PACKAGE_PATH }}
           lib-path: ./lib
           product-name: the_devils_wrench
+          build-deb: false
           output-folder: ${{ env.OUTPUT_FOLDER }}
 
       - name: Upload AppImage artifact

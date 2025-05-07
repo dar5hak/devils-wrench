@@ -98,7 +98,6 @@ jobs:
         uses: love-actions/love-actions-windows@v1
         with:
           love-package: ${{ env.CORE_LOVE_PACKAGE_PATH }}
-          icon-path: ./assets/title.png
           rc-path: ./assets/windows/template.rc
           product-name: TheDevilsWrench
           app-id: ${{ secrets.APP_ID }}

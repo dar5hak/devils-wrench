@@ -101,7 +101,6 @@ jobs:
           rc-path: ./assets/windows/template.rc
           product-name: TheDevilsWrench
           app-id: ${{ secrets.APP_ID }}
-          project-website: https://www.example.com
           installer-languages: English.isl
           output-folder: ${{ env.OUTPUT_FOLDER }}
 

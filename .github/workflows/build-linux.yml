@@ -21,11 +21,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
       - name: Build core love package
         uses: love-actions/love-actions-core@v1
         with:
           build-list: ./assets/ ./lib/ **/*.lua
           package-path: ${{ env.CORE_LOVE_PACKAGE_PATH }}
+
       - name: Upload core love package
         uses: actions/upload-artifact@v4
         with:
@@ -61,7 +63,7 @@ jobs:
           icon-path: ./assets/title.png
           love-package: ${{ env.CORE_LOVE_PACKAGE_PATH }}
           lib-path: ./lib
-          product-name: the_devils_wrench
+          product-name: TheDevilsWrench
           build-deb: false
           output-folder: ${{ env.OUTPUT_FOLDER }}
 

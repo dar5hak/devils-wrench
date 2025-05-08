@@ -115,6 +115,9 @@ function game:update(dt)
         end
     end
 
+    -- Update player animations
+    self.player:update(dt)
+
     -- Check if player reaches the portal
     local px, py, pw, ph = self.world:getRect(self.player)
     local portalX, portalY, portalW, portalH = self.world:getRect(self.portal)

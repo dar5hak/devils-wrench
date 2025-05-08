@@ -10,3 +10,6 @@
 [submodule "lib/lume"]
 	path = lib/lume
 	url = https://github.com/rxi/lume.git
+[submodule "lib/iffy"]
+	path = lib/iffy
+	url = https://github.com/besnoi/iffy.git

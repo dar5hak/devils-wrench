@@ -10,8 +10,8 @@ local Player = Class {
         Entity.init(self, x, y, 32, 32)
         self.speed = 100
 
-        -- Initialize sprite animation
-        iffy.newAtlas("assets/player.png")
+        -- Initialize sprite animation with a unique atlas name
+        iffy.newAtlas("player_atlas", "assets/player.png", "assets/player.csv")
 
         -- Animation state
         self.currentAnim = "down"
@@ -40,7 +40,7 @@ end
 
 function Player:draw()
     local spriteName = self.currentAnim .. self.animFrame
-    iffy.drawSprite(spriteName, self.x, self.y)
+    iffy.draw("player_atlas", spriteName, self.x, self.y)
     Entity.draw(self)
 end
 

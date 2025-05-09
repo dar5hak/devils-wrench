@@ -167,7 +167,7 @@ function game:update(dt)
 
     -- Update enemies
     for _, enemy in ipairs(self.enemies) do
-        enemy:move(dt, self.world)
+        enemy:update(dt, self.world) -- Call update instead of move directly
         if self.world:hasItem(enemy) then
             local ex, ey, ew, eh = self.world:getRect(enemy)
             local px, py, pw, ph = self.world:getRect(self.player)

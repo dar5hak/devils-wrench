@@ -115,8 +115,9 @@ function game:update(dt)
         end
     end
 
-    -- Update player animations
+    -- Update player and portal animations
     self.player:update(dt)
+    self.portal:update(dt)
 
     -- Check if player reaches the portal
     local px, py, pw, ph = self.world:getRect(self.player)
@@ -124,6 +125,7 @@ function game:update(dt)
     if not self.transitioningToVictory and px < portalX + portalW and px + pw > portalX and py < portalY + portalH and py + ph > portalY then
         self.transitioningToVictory = true
         self.transitionTimer = 0
+        self.portal.animDuration = 0.05
         self.player:move(portalX, portalY, dt, self.world)
     end
 

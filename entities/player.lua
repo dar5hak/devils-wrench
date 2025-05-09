@@ -87,7 +87,12 @@ function Player:move(goalX, goalY, dt, world)
                 actualY = col.touch.y
             end
         elseif col.other.type == 'enemy' then
-            return false -- Collision with enemy
+            -- Allow some overlap before triggering collision
+            local ex, ey, ew, eh = world:getRect(col.other)
+            local px, py, pw, ph = world:getRect(self)
+            if ex + 8 < px + pw - 8 and ex + ew - 8 > px + 8 and ey + 8 < py + ph - 8 and ey + eh - 8 > py + 8 then
+                return false -- Collision with enemy
+            end
         end
     end
 

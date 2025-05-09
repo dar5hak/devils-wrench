@@ -19,6 +19,7 @@ local game = {}
 
 function game:enter()
     self.transitioningToVictory = false
+    self.transitioningToGameOver = false
     self.transitionTimer = 0
 
     self.timeElapsed = 0
@@ -129,7 +130,7 @@ function game:update(dt)
         self.player:move(portalX, portalY, dt, self.world)
     end
 
-    -- Handle transition to victory
+    -- Handle transitions
     if self.transitioningToVictory then
         self.transitionTimer = self.transitionTimer + dt
         if self.transitionTimer < 1 then
@@ -139,6 +140,13 @@ function game:update(dt)
         else
             self.gameMusic:stop()
             Gamestate.switch(victory)
+        end
+        return
+    elseif self.transitioningToGameOver then
+        self.transitionTimer = self.transitionTimer + dt
+        if self.transitionTimer > 2 then
+            self.gameMusic:stop()
+            Gamestate.switch(gameover)
         end
         return
     end
@@ -162,8 +170,10 @@ function game:update(dt)
 
     -- Update player movement and check for collisions
     if not self.player:move(goalX, goalY, dt, self.world) then
-        self.gameMusic:stop()
-        Gamestate.switch(gameover)
+        if not self.transitioningToGameOver then
+            self.transitioningToGameOver = true
+            self.transitionTimer = 0
+        end
         return
     end
 
@@ -173,9 +183,12 @@ function game:update(dt)
         if self.world:hasItem(enemy) then
             local ex, ey, ew, eh = self.world:getRect(enemy)
             local px, py, pw, ph = self.world:getRect(self.player)
-            if ex < px + pw and ex + ew > px and ey < py + ph and ey + eh > py then
-                self.gameMusic:stop()
-                Gamestate.switch(gameover)
+            -- Allow 8 pixels of overlap before triggering collision
+            if ex + 8 < px + pw - 8 and ex + ew - 8 > px + 8 and ey + 8 < py + ph - 8 and ey + eh - 8 > py + 8 then
+                if not self.transitioningToGameOver then
+                    self.transitioningToGameOver = true
+                    self.transitionTimer = 0
+                end
                 return
             end
         end

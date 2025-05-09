@@ -76,12 +76,14 @@ function Player:move(goalX, goalY, dt, world)
         return nil
     end)
 
-    -- Allow a margin of error while turning
+    -- Allow a margin of error while turning and track if we're near a wall
+    local nearWall = false
     for _, col in ipairs(cols) do
         if col.other.type == 'wall' then
-            if math.abs(col.touch.x - goalX) <= 6 then
+            nearWall = true
+            if math.abs(col.touch.x - goalX) <= 8 then
                 actualX = col.touch.x
-            elseif math.abs(col.touch.y - goalY) <= 6 then
+            elseif math.abs(col.touch.y - goalY) <= 8 then
                 actualY = col.touch.y
             end
         elseif col.other.type == 'enemy' then
@@ -89,11 +91,25 @@ function Player:move(goalX, goalY, dt, world)
         end
     end
 
-    -- Snap player to grid for smoother movement
-    if love.keyboard.isDown(upKey) or love.keyboard.isDown(downKey) then
-        actualX = math.floor((actualX + self.width / 2) / self.width) * self.width
-    elseif love.keyboard.isDown(leftKey) or love.keyboard.isDown(rightKey) then
-        actualY = math.floor((actualY + self.height / 2) / self.height) * self.height
+    -- Only snap to grid when near walls and attempting to turn
+    if nearWall then
+        -- Check if trying to turn (pressing a perpendicular direction)
+        local verticalMove = love.keyboard.isDown(upKey) or love.keyboard.isDown(downKey)
+        local horizontalMove = love.keyboard.isDown(leftKey) or love.keyboard.isDown(rightKey)
+
+        if verticalMove then
+            -- Only snap X when we're close to a grid line
+            local gridX = math.floor((actualX + self.width / 2) / self.width) * self.width
+            if math.abs(actualX - gridX) <= 8 then
+                actualX = gridX
+            end
+        elseif horizontalMove then
+            -- Only snap Y when we're close to a grid line
+            local gridY = math.floor((actualY + self.height / 2) / self.height) * self.height
+            if math.abs(actualY - gridY) <= 8 then
+                actualY = gridY
+            end
+        end
     end
 
     self.x, self.y = actualX, actualY

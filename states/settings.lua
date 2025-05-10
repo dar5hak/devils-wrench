@@ -65,6 +65,7 @@ function settings:mousepressed(x, y, button)
 
         if x >= saveBtnX and x <= saveBtnX + self.saveBtn:getWidth() and
             y >= saveBtnY and y <= saveBtnY + self.saveBtn:getHeight() then
+            uiSelectEffect:play()
             Gamestate.pop()
         end
     end
@@ -72,6 +73,7 @@ function settings:mousepressed(x, y, button)
     for _, keySetting in pairs(settingsManager.keySettings) do
         if x >= keySetting.x and x <= keySetting.x + keySetting.image:getWidth() and
             y >= keySetting.y and y <= keySetting.y + keySetting.image:getHeight() then
+            uiSelectEffect:play()
             settingsManager.currentSettings.key = keySetting
         end
     end
@@ -79,6 +81,7 @@ function settings:mousepressed(x, y, button)
     for _, zoomSetting in pairs(settingsManager.zoomSettings) do
         if x >= zoomSetting.x and x <= zoomSetting.x + zoomSetting.image:getWidth() and
             y >= zoomSetting.y and y <= zoomSetting.y + zoomSetting.image:getHeight() then
+            uiSelectEffect:play()
             settingsManager.currentSettings.zoom = zoomSetting
         end
     end

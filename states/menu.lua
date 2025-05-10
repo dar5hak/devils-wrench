@@ -76,6 +76,7 @@ end
 function menu:keyreleased(key)
     if key == 'return' then
         self.titleMusic:stop()
+        uiSelectEffect:play()
         Gamestate.push(game)
     end
 end
@@ -86,18 +87,21 @@ function menu:mousepressed(x, y, button)
         local newGameButtonY = 348
         if x >= newGameButtonX and x <= newGameButtonX + self.newGameButton:getWidth() and y >= newGameButtonY and y <= newGameButtonY + self.newGameButton:getHeight() then
             self.titleMusic:stop()
+            uiSelectEffect:play()
             Gamestate.push(game)
         end
 
         local settingsIconX = 666 - self.settingsIcon:getWidth() / 2
         local settingsIconY = 541 - self.settingsIcon:getHeight() / 2
         if x >= settingsIconX and x <= settingsIconX + self.settingsIcon:getWidth() and y >= settingsIconY and y <= settingsIconY + self.settingsIcon:getHeight() then
+            uiSelectEffect:play()
             Gamestate.push(settings)
         end
 
         local exitIconX = 750 - self.exitIcon:getWidth() / 2
         local exitIconY = 543 - self.exitIcon:getHeight() / 2
         if x >= exitIconX and x <= exitIconX + self.exitIcon:getWidth() and y >= exitIconY and y <= exitIconY + self.exitIcon:getHeight() then
+            uiSelectEffect:play()
             love.event.quit()
         end
     end

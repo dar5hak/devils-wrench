@@ -33,6 +33,10 @@ function game:enter()
     self.gameMusic:setLooping(true)
     self.gameMusic:play()
 
+    self.portalBeamUpEffect = love.audio.newSource('assets/portal-beam-up.wav', 'static')
+    self.damageEffect = love.audio.newSource('assets/damage.wav', 'static')
+    self.settingsUpdatedEffect = love.audio.newSource('assets/settings-updated.wav', 'static')
+
     self.sprites = {
         tile = love.graphics.newImage('assets/tile.png'),
         wall = love.graphics.newImage('assets/wall.png'),
@@ -106,8 +110,9 @@ function game:update(dt)
 
     -- Check if the randomize interval has passed
     if self.timeElapsed - self.lastRandomize >= self.randomizeInterval then
-        settingsManager.randomizeSettings()
         self:showToast("Settings updated")
+        self.settingsUpdatedEffect:play()
+        settingsManager.randomizeSettings()
         self.lastRandomize = self.timeElapsed
     end
 
@@ -135,9 +140,10 @@ function game:update(dt)
 
     -- Handle transitions
     if self.transitioningToVictory then
+        self.gameMusic:stop()
         self.transitionTimer = self.transitionTimer + dt
-        if self.transitionTimer < 1 then
-            -- Wait for a second
+        if self.transitionTimer < 0.5 then
+            self.portalBeamUpEffect:play()
         elseif self.transitionTimer < 2 then
             self.player.y = self.player.y - 100 * dt
         else
@@ -145,6 +151,8 @@ function game:update(dt)
         end
         return
     elseif self.transitioningToGameOver then
+        self.gameMusic:stop()
+        self.damageEffect:play()
         self.transitionTimer = self.transitionTimer + dt
         if self.transitionTimer > 2 then
             self:switchState(gameover)
@@ -252,7 +260,6 @@ function game:isWithinRoomBounds(x, y)
 end
 
 function game:switchState(state)
-    self.gameMusic:stop()
     love.graphics.setDefaultFilter("linear", "linear")
     Gamestate.switch(state)
 end

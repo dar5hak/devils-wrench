@@ -7,14 +7,11 @@ function victory:init()
     self.background = love.graphics.newImage('assets/victory-bg.png')
     self.text = love.graphics.newImage('assets/victory-text.png')
     self.menuBtn = love.graphics.newImage('assets/victory-menu-btn.png')
+    self.music = love.audio.newSource('assets/Goblins_Dance_(Battle).wav', 'stream')
 end
 
 function victory:enter(previous)
-    -- Logic to run when entering the victory state
-end
-
-function victory:update(dt)
-    -- Update logic for the victory state
+    self.music:play()
 end
 
 function victory:draw()
@@ -32,6 +29,8 @@ end
 
 function victory:keyreleased(key)
     if key == 'return' then
+        self.music:stop()
+        uiSelectEffect:play()
         Gamestate.pop()
     end
 end
@@ -42,7 +41,9 @@ function victory:mousepressed(x, y, button)
     local menuBtnY = 480
 
     if button == 1 and x >= menuBtnX and x <= menuBtnX + self.menuBtn:getWidth() and
-       y >= menuBtnY and y <= menuBtnY + self.menuBtn:getHeight() then
+        y >= menuBtnY and y <= menuBtnY + self.menuBtn:getHeight() then
+        self.music:stop()
+        uiSelectEffect:play()
         Gamestate.pop()
     end
 end

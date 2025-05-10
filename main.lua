@@ -11,6 +11,7 @@ local pause = require('states.pause')
 require('map')
 
 function love.load()
+    _G.uiSelectEffect = love.audio.newSource('assets/ui-select.wav', 'static')
     Gamestate.registerEvents()
     Gamestate.switch(menu)
 end

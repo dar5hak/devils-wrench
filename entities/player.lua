@@ -90,6 +90,8 @@ function Player:move(goalX, goalY, dt, world)
     local actualX, actualY, cols = world:move(self, goalX, goalY, function(item, other)
         if other.type == 'wall' then
             return 'slide'
+        elseif other.type == 'portal' then
+            return 'cross'
         end
         return nil
     end)

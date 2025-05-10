@@ -148,18 +148,24 @@ function game:update(dt)
 
     local px, py, pw, ph = self.world:getRect(self.player)
     local portalX, portalY, portalW, portalH = self.world:getRect(self.portal)
+
     if not self.transitioningToVictory and px < portalX + portalW and px + pw > portalX and py < portalY + portalH and py + ph > portalY then
         self.transitioningToVictory = true
         self.transitionTimer = 0
         self.portal.animDuration = 0.05
-        self.player:move(portalX, portalY, dt, self.world)
     end
 
     if self.transitioningToVictory then
         self.audio.gameMusic:stop()
         self.transitionTimer = self.transitionTimer + dt
+
         if self.transitionTimer < 0.5 then
             self.audio.portalBeamUpEffect:play()
+            -- Smoothly move the player towards the portal's center
+            local targetX = portalX + portalW / 2 - self.player.width / 2
+            local targetY = portalY + portalH / 2 - self.player.height / 2
+            self.player.x = self.player.x + (targetX - self.player.x) * dt * 5
+            self.player.y = self.player.y + (targetY - self.player.y) * dt * 5
         elseif self.transitionTimer < 2 then
             self.player.y = self.player.y - 100 * dt
         else

@@ -12,6 +12,9 @@ local pause = require('states.pause')
 local Player = require('entities.player')
 local Enemy = require('entities.enemy')
 local Portal = require('entities.portal')
+local helpers = require('helpers')
+local Toast = require('toast')
+local ProgressBar = require('progressBar')
 
 local settingsManager = require('settingsManager')
 
@@ -30,24 +33,20 @@ function game:enter()
 
     self.timeout = 300
 
-    self.progressBar = {
-        width = 100,
-        height = 6,
-        color = {1, 0, 1},
-        x = 50,
-        y = 23
+    self.progressBar = ProgressBar:new(50, 23, 100, 6, {1, 0, 1})
+
+    self.audio = {
+        gameMusic = love.audio.newSource('assets/MeltdownTheme_Loopable.ogg', 'stream'),
+        portalBeamUpEffect = love.audio.newSource('assets/portal-beam-up.wav', 'static'),
+        damageEffect = love.audio.newSource('assets/damage.wav', 'static'),
+        settingsUpdatedEffect = love.audio.newSource('assets/settings-updated.wav', 'static'),
+        pauseEffect = love.audio.newSource('assets/pause.wav', 'static'),
+        unpauseEffect = love.audio.newSource('assets/unpause.wav', 'static'),
     }
 
-    self.gameMusic = love.audio.newSource('assets/MeltdownTheme_Loopable.ogg', 'stream')
-    self.gameMusic:setVolume(0.5)
-    self.gameMusic:setLooping(true)
-    self.gameMusic:play()
-
-    self.portalBeamUpEffect = love.audio.newSource('assets/portal-beam-up.wav', 'static')
-    self.damageEffect = love.audio.newSource('assets/damage.wav', 'static')
-    self.settingsUpdatedEffect = love.audio.newSource('assets/settings-updated.wav', 'static')
-    self.pauseEffect = love.audio.newSource('assets/pause.wav', 'static')
-    self.unpauseEffect = love.audio.newSource('assets/unpause.wav', 'static')
+    self.audio.gameMusic:setVolume(0.5)
+    self.audio.gameMusic:setLooping(true)
+    self.audio.gameMusic:play()
 
     self.sprites = {
         tile = love.graphics.newImage('assets/tile.png'),
@@ -91,7 +90,7 @@ function game:enter()
         local randomTile
         repeat
             randomTile = roomTiles[love.math.random(#roomTiles)]
-        until math.abs(randomTile.x - math.floor(self.player.x / tileWidth) - 1) > 4 or math.abs(randomTile.y - math.floor(self.player.y / tileHeight) - 1) > 4
+        until helpers.isTileFarFromPlayer(randomTile, self.player, tileWidth, tileHeight, 4)
 
         local enemy = Enemy((randomTile.x - 1) * tileWidth, (randomTile.y - 1) * tileHeight)
         table.insert(self.enemies, enemy)
@@ -100,12 +99,7 @@ function game:enter()
 
     self.camera = Camera(self.player.x, self.player.y)
 
-    self.toast = {
-        message = nil,
-        timer = 0,
-        duration = 5,
-        font = love.graphics.newFont(24),
-    }
+    self.toast = Toast:new(love.graphics.newFont(24), 5)
 end
 
 function game:showToast(message)
@@ -115,10 +109,10 @@ end
 
 function game:resume(previous)
     love.graphics.setDefaultFilter("nearest", "nearest")
-    self.gameMusic:play()
+    self.audio.gameMusic:play()
 
     if previous == pause then
-        self.unpauseEffect:play()
+        self.audio.unpauseEffect:play()
     end
 end
 
@@ -127,17 +121,12 @@ function game:update(dt)
 
     if self.timeElapsed - self.lastRandomize >= self.randomizeInterval then
         self:showToast("Settings updated")
-        self.settingsUpdatedEffect:play()
+        self.audio.settingsUpdatedEffect:play()
         settingsManager.randomizeSettings()
         self.lastRandomize = self.timeElapsed
     end
 
-    if self.toast.timer > 0 then
-        self.toast.timer = self.toast.timer - dt
-        if self.toast.timer <= 0 then
-            self.toast.message = nil
-        end
-    end
+    self.toast:update(dt)
 
     self.timeout = self.timeout - dt
     if self.timeout <= 0 then
@@ -149,8 +138,7 @@ function game:update(dt)
     end
 
     local progressRatio = self.timeout / 300
-    self.progressBar.width = 100 * progressRatio
-    self.progressBar.color = {1, 0, progressRatio}
+    self.progressBar:update(progressRatio)
 
     self.player:update(dt)
     self.portal:update(dt)
@@ -165,10 +153,10 @@ function game:update(dt)
     end
 
     if self.transitioningToVictory then
-        self.gameMusic:stop()
+        self.audio.gameMusic:stop()
         self.transitionTimer = self.transitionTimer + dt
         if self.transitionTimer < 0.5 then
-            self.portalBeamUpEffect:play()
+            self.audio.portalBeamUpEffect:play()
         elseif self.transitionTimer < 2 then
             self.player.y = self.player.y - 100 * dt
         else
@@ -176,8 +164,8 @@ function game:update(dt)
         end
         return
     elseif self.transitioningToGameOver then
-        self.gameMusic:stop()
-        self.damageEffect:play()
+        self.audio.gameMusic:stop()
+        self.audio.damageEffect:play()
         self.transitionTimer = self.transitionTimer + dt
         if self.transitionTimer > 2 then
             self:switchState(gameover)
@@ -220,7 +208,7 @@ function game:update(dt)
                     if self.player.lives > 1 then
                         self.player.lives = self.player.lives - 1
                         self.world:update(enemy, enemy.x, enemy.y)
-                        self.damageEffect:play()
+                        self.audio.damageEffect:play()
 
                         self.player.invulnerable = true
                         self.player.invulnerabilityTimer = 2
@@ -269,14 +257,14 @@ function game:draw()
 
     love.graphics.draw(self.sprites.clockIcon, 10, 10)
 
-    love.graphics.setColor(self.progressBar.color)
-    love.graphics.rectangle("fill", self.progressBar.x, self.progressBar.y, self.progressBar.width, self.progressBar.height)
-    love.graphics.setColor(1, 1, 1)
+    self.progressBar:draw()
 
     local lifeIndicatorWidth = self.sprites.playerLifeIndicator:getWidth()
     for i = 1, self.player.lives do
         love.graphics.draw(self.sprites.playerLifeIndicator, love.graphics.getWidth() - (i * (lifeIndicatorWidth + 5)), 10)
     end
+
+    self.toast:draw()
 
     if self.toast.message then
         love.graphics.setColor(0, 0, 0, 0.7)
@@ -295,11 +283,17 @@ function game:keypressed(key)
 end
 
 function game:isWithinRoomBounds(x, y)
-    return self.tiles[y][x - 1] == ' ' and self.tiles[y][x + 1] == ' ' and
-        self.tiles[y - 1][x] == ' ' and self.tiles[y + 1][x] == ' ' and
-        self.tiles[y - 1][x - 1] == ' ' and self.tiles[y - 1][x + 1] == ' ' and
-        self.tiles[y + 1][x - 1] == ' ' and self.tiles[y + 1][x + 1] == ' ' and
-        self.tiles[y][x] == ' '
+    local offsets = {
+        {0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1},
+        {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
+    }
+    for _, offset in ipairs(offsets) do
+        local dx, dy = offset[1], offset[2]
+        if self.tiles[y + dy][x + dx] ~= ' ' then
+            return false
+        end
+    end
+    return true
 end
 
 function game:switchState(state)
@@ -308,8 +302,8 @@ function game:switchState(state)
 end
 
 function game:pause()
-    self.gameMusic:pause()
-    self.pauseEffect:play()
+    self.audio.gameMusic:pause()
+    self.audio.pauseEffect:play()
     love.graphics.setDefaultFilter("linear", "linear")
     Gamestate.push(pause)
 end

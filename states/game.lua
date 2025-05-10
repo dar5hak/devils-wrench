@@ -33,7 +33,8 @@ function game:enter()
     self.lastRandomize = 0
     self.randomizeInterval = 30
 
-    self.timeout = 300
+    self.max_timeout = 300
+    self.timeout = self.max_timeout
 
     self.progressBar = ProgressBar:new(50, 23, 100, 6, {1, 0, 1})
 
@@ -140,7 +141,7 @@ function game:update(dt)
         end
     end
 
-    local progressRatio = self.timeout / 300
+    local progressRatio = self.timeout / self.max_timeout
     self.progressBar:update(progressRatio)
 
     self.player:update(dt)

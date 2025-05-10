@@ -12,6 +12,7 @@ local pause = require('states.pause')
 local Player = require('entities.player')
 local Enemy = require('entities.enemy')
 local Portal = require('entities.portal')
+
 local helpers = require('helpers')
 local Toast = require('toast')
 local ProgressBar = require('progressBar')
@@ -22,6 +23,7 @@ local game = {}
 
 function game:enter()
     love.graphics.setDefaultFilter("nearest", "nearest")
+    love.mouse.setVisible(false)
 
     self.transitioningToVictory = false
     self.transitioningToGameOver = false
@@ -109,6 +111,7 @@ end
 
 function game:resume(previous)
     love.graphics.setDefaultFilter("nearest", "nearest")
+    love.mouse.setVisible(false)
     self.audio.gameMusic:play()
 
     if previous == pause then
@@ -298,6 +301,7 @@ end
 
 function game:switchState(state)
     love.graphics.setDefaultFilter("linear", "linear")
+    love.mouse.setVisible(true)
     Gamestate.switch(state)
 end
 
@@ -305,6 +309,7 @@ function game:pause()
     self.audio.gameMusic:pause()
     self.audio.pauseEffect:play()
     love.graphics.setDefaultFilter("linear", "linear")
+    love.mouse.setVisible(true)
     Gamestate.push(pause)
 end
 

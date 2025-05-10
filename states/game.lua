@@ -230,7 +230,6 @@ function game:update(dt)
                 if not self.player.invulnerable then
                     if self.player.lives > 1 then
                         self.player.lives = self.player.lives - 1
-                        print("Player lives remaining: " .. self.player.lives)
                         self.world:update(enemy, enemy.x, enemy.y)
                         self.damageEffect:play()
 

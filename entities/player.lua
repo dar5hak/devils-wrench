@@ -38,16 +38,11 @@ function Player:update(dt)
     if self.invulnerable then
         self.invulnerabilityTimer = self.invulnerabilityTimer - dt
 
-        if self.invulnerabilityTimer > 1 then
-            -- First second: player is completely invisible
-            self.visible = false
-        else
-            -- Remaining time: player blinks every 0.25 seconds
-            self.blinkTimer = self.blinkTimer - dt
-            if self.blinkTimer <= 0 then
-                self.visible = not self.visible
-                self.blinkTimer = 0.25 -- Toggle visibility every 0.25 seconds
-            end
+        -- Player blinks every 0.25 seconds during the entire invulnerability period
+        self.blinkTimer = self.blinkTimer - dt
+        if self.blinkTimer <= 0 then
+            self.visible = not self.visible
+            self.blinkTimer = 0.25 -- Toggle visibility every 0.25 seconds
         end
 
         if self.invulnerabilityTimer <= 0 then

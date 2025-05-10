@@ -75,12 +75,15 @@ function game:enter()
         end
     end
 
-    local randomTile = roomTiles[love.math.random(#roomTiles)]
+    local playerTile = roomTiles[love.math.random(#roomTiles)]
     local tileWidth, tileHeight = self.sprites.tile:getDimensions()
-    self.player = Player((randomTile.x - 1) * tileWidth, (randomTile.y - 1) * tileHeight, 32, 32)
+    self.player = Player((playerTile.x - 1) * tileWidth, (playerTile.y - 1) * tileHeight, 32, 32)
     self.world:add(self.player, self.player.x, self.player.y, self.player.width, self.player.height)
 
-    local portalTile = roomTiles[love.math.random(#roomTiles)]
+    local portalTile
+    repeat
+        portalTile = roomTiles[love.math.random(#roomTiles)]
+    until helpers.isTileFarFromPlayer(portalTile, self.player, tileWidth, tileHeight, 20)
     self.portal = Portal((portalTile.x - 1) * tileWidth, (portalTile.y - 1) * tileHeight)
     self.world:add(self.portal, self.portal.x, self.portal.y, self.portal.width, self.portal.height)
 
@@ -90,12 +93,12 @@ function game:enter()
     self.enemyCount = 40
 
     for i = 1, self.enemyCount do
-        local randomTile
+        local enemyTile
         repeat
-            randomTile = roomTiles[love.math.random(#roomTiles)]
-        until helpers.isTileFarFromPlayer(randomTile, self.player, tileWidth, tileHeight, 4)
+            enemyTile = roomTiles[love.math.random(#roomTiles)]
+        until helpers.isTileFarFromPlayer(enemyTile, self.player, tileWidth, tileHeight, 4)
 
-        local enemy = Enemy((randomTile.x - 1) * tileWidth, (randomTile.y - 1) * tileHeight)
+        local enemy = Enemy((enemyTile.x - 1) * tileWidth, (enemyTile.y - 1) * tileHeight)
         table.insert(self.enemies, enemy)
         self.world:add(enemy, enemy.x, enemy.y, enemy.width, enemy.height)
     end

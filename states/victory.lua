@@ -4,7 +4,7 @@ local Gamestate = require('lib.hump.gamestate')
 local victory = {}
 
 function victory:init()
-    self.background = love.graphics.newImage('assets/victory-bg.png')
+    self.background = love.graphics.newImage('assets/victory-bg.jpg')
     self.text = love.graphics.newImage('assets/victory-text.png')
     self.menuBtn = love.graphics.newImage('assets/victory-menu-btn.png')
     self.music = love.audio.newSource('assets/Goblins_Dance_(Battle).wav', 'stream')

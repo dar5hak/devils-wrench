@@ -14,6 +14,7 @@ function menu:init()
     self.newGameButton = love.graphics.newImage('assets/new-game-btn.png')
     self.settingsIcon = love.graphics.newImage('assets/settings-icon.png')
     self.exitIcon = love.graphics.newImage('assets/exit-icon.png')
+    self.creditsIcon = love.graphics.newImage('assets/credits-icon.png')
 
     self.titleMusic = love.audio.newSource('assets/HaroldParanormalInstigatorTheme_Loopable.ogg', 'stream')
     self.titleMusic:setVolume(0.5)
@@ -21,6 +22,7 @@ function menu:init()
 
     self.settingsIconAngle = 0
     self.exitIconAngle = 0
+    self.creditsIconAngle = 0
 
     self:setupAnimations()
 end
@@ -34,12 +36,19 @@ function menu:setupAnimations()
         Timer.tween(3, self, { exitIconAngle = -0.1 }, 'linear')
     end)
 
+    Timer.tween(3, self, { creditsIconAngle = 0.1 }, 'linear', function()
+        Timer.tween(3, self, { creditsIconAngle = -0.1 }, 'linear')
+    end)
+
     Timer.every(6, function()
         Timer.tween(3, self, { settingsIconAngle = 0.1 }, 'linear', function()
             Timer.tween(3, self, { settingsIconAngle = -0.1 }, 'linear')
         end)
         Timer.tween(3, self, { exitIconAngle = 0.1 }, 'linear', function()
             Timer.tween(3, self, { exitIconAngle = -0.1 }, 'linear')
+        end)
+        Timer.tween(3, self, { creditsIconAngle = 0.1 }, 'linear', function()
+            Timer.tween(3, self, { creditsIconAngle = -0.1 }, 'linear')
         end)
     end)
 end
@@ -67,10 +76,15 @@ function menu:draw()
     love.graphics.draw(self.title, 134, 44)
     love.graphics.draw(self.newGameButtonBg, newGameButtonX, 348)
     love.graphics.draw(self.newGameButton, newGameButtonX, 348, self.buttonAngle, 1, 1, -2, 0)
+
     love.graphics.draw(self.settingsIcon, 666, 541, self.settingsIconAngle, 1, 1, self.settingsIcon:getWidth() / 2,
         self.settingsIcon:getHeight() / 2)
+
     love.graphics.draw(self.exitIcon, 750, 543, self.exitIconAngle, 1, 1, self.exitIcon:getWidth() / 2,
         self.exitIcon:getHeight() / 2)
+
+    love.graphics.draw(self.creditsIcon, 60, 543, self.creditsIconAngle, 1, 1, self.creditsIcon:getWidth() / 2,
+        self.creditsIcon:getHeight() / 2)
 end
 
 function menu:keyreleased(key)
@@ -103,6 +117,13 @@ function menu:mousepressed(x, y, button)
         if x >= exitIconX and x <= exitIconX + self.exitIcon:getWidth() and y >= exitIconY and y <= exitIconY + self.exitIcon:getHeight() then
             uiSelectEffect:play()
             love.event.quit()
+        end
+
+        local creditsIconX = 60 - self.creditsIcon:getWidth() / 2
+        local creditsIconY = 543 - self.creditsIcon:getHeight() / 2
+        if x >= creditsIconX and x <= creditsIconX + self.creditsIcon:getWidth() and y >= creditsIconY and y <= creditsIconY + self.creditsIcon:getHeight() then
+            uiSelectEffect:play()
+            Gamestate.push(require('states.credits'))
         end
     end
 end

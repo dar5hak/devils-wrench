@@ -4,14 +4,14 @@ local M = {}
 
 function M.generate()
     local mapWidth, mapHeight = 100, 100
-    local changeDirectionMod = 10
-    local sparsenessMod = 70
+    local changeDirectionMod = 5
+    local sparsenessMod = 45
     local deadEndRemovalMod = 90
-    local numberOfRooms = 5
+    local numberOfRooms = 8
     local minRoomWidth = 5
     local minRoomHeight = 5
-    local maxRoomWidth = 15
-    local maxRoomHeight = 15
+    local maxRoomWidth = 10
+    local maxRoomHeight = 10
 
     local generator = astray.Astray:new(
         mapWidth / 2 - 1,

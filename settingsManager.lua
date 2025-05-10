@@ -18,11 +18,19 @@ local currentSettings = {
 }
 
 local function randomizeSettings()
+    local newKey, newZoom
+
     local keyOptions = { 'arrows', 'wasd', 'vim' }
-    currentSettings.key = keySettings[keyOptions[love.math.random(#keyOptions)]]
+    repeat
+        newKey = keySettings[keyOptions[love.math.random(#keyOptions)]]
+    until newKey ~= currentSettings.key
+    currentSettings.key = newKey
 
     local zoomOptions = { 'zoom1', 'zoom2', 'zoom3' }
-    currentSettings.zoom = zoomSettings[zoomOptions[love.math.random(#zoomOptions)]]
+    repeat
+        newZoom = zoomSettings[zoomOptions[love.math.random(#zoomOptions)]]
+    until newZoom ~= currentSettings.zoom
+    currentSettings.zoom = newZoom
 end
 
 return {

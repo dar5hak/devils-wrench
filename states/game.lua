@@ -33,10 +33,10 @@ function game:enter()
     self.lastRandomize = 0
     self.randomizeInterval = 30
 
-    self.max_timeout = 120
+    self.max_timeout = 160
     self.timeout = self.max_timeout
 
-    self.progressBar = ProgressBar:new(50, 25, 120, 6, {1, 0, 1})
+    self.progressBar = ProgressBar:new(50, 25, 160, 6, {1, 0, 1})
 
     self.audio = {
         gameMusic = love.audio.newSource('assets/MeltdownTheme_Loopable.ogg', 'stream'),

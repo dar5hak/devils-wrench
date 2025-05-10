@@ -28,6 +28,16 @@ function game:enter()
     self.lastRandomize = 0
     self.randomizeInterval = 30
 
+    self.timeout = 300 -- Timeout in seconds
+
+    self.progressBar = {
+        width = 100,
+        height = 6,
+        color = {1, 0, 1}, -- Magenta
+        x = 50, -- Position next to the clock icon
+        y = 23
+    }
+
     self.gameMusic = love.audio.newSource('assets/MeltdownTheme_Loopable.ogg', 'stream')
     self.gameMusic:setVolume(0.5)
     self.gameMusic:setLooping(true)
@@ -42,6 +52,7 @@ function game:enter()
     self.sprites = {
         tile = love.graphics.newImage('assets/tile.png'),
         wall = love.graphics.newImage('assets/wall.png'),
+        clockIcon = love.graphics.newImage('assets/clock-icon.png'),
     }
 
     self.dungeon, self.tiles = map.generate()
@@ -129,6 +140,21 @@ function game:update(dt)
             self.toast.message = nil
         end
     end
+
+    -- Update timeout and progress bar
+    self.timeout = self.timeout - dt
+    if self.timeout <= 0 then
+        self.timeout = 0
+        if not self.transitioningToGameOver then
+            self.transitioningToGameOver = true
+            self.transitionTimer = 0
+        end
+    end
+
+    -- Gradually transition the progress bar color to red as timeout approaches 0
+    local progressRatio = self.timeout / 300
+    self.progressBar.width = 100 * progressRatio
+    self.progressBar.color = {1, 0, progressRatio} -- Gradually decrease blue from 1 to 0
 
     -- Update player and portal animations
     self.player:update(dt)
@@ -239,6 +265,14 @@ function game:draw()
     end
 
     self.camera:detach()
+
+    -- Draw the clock icon
+    love.graphics.draw(self.sprites.clockIcon, 10, 10)
+
+    -- Draw the progress bar
+    love.graphics.setColor(self.progressBar.color)
+    love.graphics.rectangle("fill", self.progressBar.x, self.progressBar.y, self.progressBar.width, self.progressBar.height)
+    love.graphics.setColor(1, 1, 1) -- Reset color to white
 
     -- Draw toast message if active
     if self.toast.message then

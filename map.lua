@@ -3,15 +3,15 @@ local astray = require 'lib.astray.astray'
 local M = {}
 
 function M.generate(level)
-    local mapWidth, mapHeight = 80, 80
+    local mapWidth, mapHeight = 60, 60
     local changeDirectionMod = 20
     local sparsenessMod = 80
     local deadEndRemovalMod = 99
-    local numberOfRooms = 6
+    local numberOfRooms = 5
     local minRoomWidth = 5
     local minRoomHeight = 5
-    local maxRoomWidth = 12
-    local maxRoomHeight = 12
+    local maxRoomWidth = 10
+    local maxRoomHeight = 10
 
     local generator = astray.Astray:new(
         mapWidth / 2 - 1,

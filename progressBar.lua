@@ -5,12 +5,13 @@ function ProgressBar:new(x, y, width, height, color)
     return setmetatable({
         x = x, y = y,
         width = width, height = height,
+        maxWidth = width,
         color = color or {1, 0, 1},
     }, ProgressBar)
 end
 
 function ProgressBar:update(ratio)
-    self.width = 100 * ratio
+    self.width = self.maxWidth * ratio
     self.color = {1, 0, ratio}
 end
 

@@ -14,14 +14,6 @@ function settings:init()
     self.saveBtn = love.graphics.newImage('assets/save-btn.png')
 end
 
-function settings:enter(previous)
-    -- Logic to run when entering the settings state
-end
-
-function settings:update(dt)
-    -- Update logic for the settings state
-end
-
 function settings:draw()
     love.graphics.draw(self.background, 0, 0)
 

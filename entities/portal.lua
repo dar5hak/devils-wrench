@@ -9,10 +9,8 @@ local Portal = Class {
         Entity.init(self, x, y, 32, 32)
         self.type = 'portal'
 
-        -- Initialize sprite animation with a unique atlas name
         iffy.newAtlas("portal_atlas", "assets/portal.png", "assets/portal.csv")
 
-        -- Animation state
         self.animTimer = 0
         self.animFrame = 1
         self.animDuration = 0.25
@@ -22,7 +20,6 @@ local Portal = Class {
 function Portal:update(dt)
     Entity.update(self, dt)
 
-    -- Update animation timer
     self.animTimer = self.animTimer + dt
     if self.animTimer >= self.animDuration then
         self.animTimer = 0

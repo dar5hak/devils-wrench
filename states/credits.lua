@@ -10,14 +10,6 @@ function credits:init()
     self.backBtn = love.graphics.newImage('assets/back-btn.png')
 end
 
-function credits:enter(previous)
-    -- Logic to run when entering the credits state
-end
-
-function credits:update(dt)
-    -- Update logic for the credits state
-end
-
 function credits:draw()
     love.graphics.draw(self.background, 0, 0)
 

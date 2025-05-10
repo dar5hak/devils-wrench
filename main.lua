@@ -2,11 +2,6 @@ local love = require('love')
 local Gamestate = require('lib.hump.gamestate')
 
 local menu = require('states.menu')
-local game = require('states.game')
-local gameover = require('states.gameover')
-local settings = require('states.settings')
-local credits = require('states.credits')
-local pause = require('states.pause')
 
 require('map')
 
@@ -34,8 +29,4 @@ end
 
 function love.mousepressed(x, y, button)
     Gamestate.mousepressed(x, y, button)
-end
-
-function love.quit()
-    -- Cleanup code here
 end

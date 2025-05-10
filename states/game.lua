@@ -28,13 +28,13 @@ function game:enter()
     self.lastRandomize = 0
     self.randomizeInterval = 30
 
-    self.timeout = 300 -- Timeout in seconds
+    self.timeout = 300
 
     self.progressBar = {
         width = 100,
         height = 6,
-        color = {1, 0, 1}, -- Magenta
-        x = 50, -- Position next to the clock icon
+        color = {1, 0, 1},
+        x = 50,
         y = 23
     }
 
@@ -78,7 +78,6 @@ function game:enter()
     self.player = Player((randomTile.x - 1) * tileWidth, (randomTile.y - 1) * tileHeight, 32, 32)
     self.world:add(self.player, self.player.x, self.player.y, self.player.width, self.player.height)
 
-    -- Add portal to a random room tile
     local portalTile = roomTiles[love.math.random(#roomTiles)]
     self.portal = Portal((portalTile.x - 1) * tileWidth, (portalTile.y - 1) * tileHeight)
     self.world:add(self.portal, self.portal.x, self.portal.y, self.portal.width, self.portal.height)
@@ -126,7 +125,6 @@ end
 function game:update(dt)
     self.timeElapsed = self.timeElapsed + dt
 
-    -- Check if the randomize interval has passed
     if self.timeElapsed - self.lastRandomize >= self.randomizeInterval then
         self:showToast("Settings updated")
         self.settingsUpdatedEffect:play()
@@ -134,7 +132,6 @@ function game:update(dt)
         self.lastRandomize = self.timeElapsed
     end
 
-    -- Update the toast timer and remove the message if it has expired
     if self.toast.timer > 0 then
         self.toast.timer = self.toast.timer - dt
         if self.toast.timer <= 0 then
@@ -142,7 +139,6 @@ function game:update(dt)
         end
     end
 
-    -- Update timeout and progress bar
     self.timeout = self.timeout - dt
     if self.timeout <= 0 then
         self.timeout = 0
@@ -152,16 +148,13 @@ function game:update(dt)
         end
     end
 
-    -- Gradually transition the progress bar color to red as timeout approaches 0
     local progressRatio = self.timeout / 300
     self.progressBar.width = 100 * progressRatio
-    self.progressBar.color = {1, 0, progressRatio} -- Gradually decrease blue from 1 to 0
+    self.progressBar.color = {1, 0, progressRatio}
 
-    -- Update player and portal animations
     self.player:update(dt)
     self.portal:update(dt)
 
-    -- Check if player reaches the portal
     local px, py, pw, ph = self.world:getRect(self.player)
     local portalX, portalY, portalW, portalH = self.world:getRect(self.portal)
     if not self.transitioningToVictory and px < portalX + portalW and px + pw > portalX and py < portalY + portalH and py + ph > portalY then
@@ -171,7 +164,6 @@ function game:update(dt)
         self.player:move(portalX, portalY, dt, self.world)
     end
 
-    -- Handle transitions
     if self.transitioningToVictory then
         self.gameMusic:stop()
         self.transitionTimer = self.transitionTimer + dt
@@ -193,7 +185,6 @@ function game:update(dt)
         return
     end
 
-    -- Handle player movement
     local goalX, goalY = self.player.x, self.player.y
 
     local upKey, downKey, leftKey, rightKey = settingsManager.currentSettings.key.up,
@@ -210,7 +201,6 @@ function game:update(dt)
         goalX = goalX + self.player.speed * dt
     end
 
-    -- Update player movement and check for collisions
     if not self.player:move(goalX, goalY, dt, self.world) then
         if not self.transitioningToGameOver then
             self.transitioningToGameOver = true
@@ -219,9 +209,8 @@ function game:update(dt)
         return
     end
 
-    -- Update enemies
     for _, enemy in ipairs(self.enemies) do
-        enemy:update(dt, self.world) -- Call update instead of move directly
+        enemy:update(dt, self.world)
         if self.world:hasItem(enemy) then
             local ex, ey, ew, eh = self.world:getRect(enemy)
             local px, py, pw, ph = self.world:getRect(self.player)
@@ -233,7 +222,6 @@ function game:update(dt)
                         self.world:update(enemy, enemy.x, enemy.y)
                         self.damageEffect:play()
 
-                        -- Trigger invulnerability and blinking effect
                         self.player.invulnerable = true
                         self.player.invulnerabilityTimer = 2
                         self.player.blinkTimer = 0.5
@@ -249,7 +237,6 @@ function game:update(dt)
         end
     end
 
-    -- Update camera position
     self.camera:lookAt(self.player.x, self.player.y)
     self.camera:zoomTo(settingsManager.currentSettings.zoom.scale)
 end
@@ -280,25 +267,21 @@ function game:draw()
 
     self.camera:detach()
 
-    -- Draw the clock icon
     love.graphics.draw(self.sprites.clockIcon, 10, 10)
 
-    -- Draw the progress bar
     love.graphics.setColor(self.progressBar.color)
     love.graphics.rectangle("fill", self.progressBar.x, self.progressBar.y, self.progressBar.width, self.progressBar.height)
-    love.graphics.setColor(1, 1, 1) -- Reset color to white
+    love.graphics.setColor(1, 1, 1)
 
-    -- Draw player life indicators in the top-right corner
     local lifeIndicatorWidth = self.sprites.playerLifeIndicator:getWidth()
     for i = 1, self.player.lives do
         love.graphics.draw(self.sprites.playerLifeIndicator, love.graphics.getWidth() - (i * (lifeIndicatorWidth + 5)), 10)
     end
 
-    -- Draw toast message if active
     if self.toast.message then
-        love.graphics.setColor(0, 0, 0, 0.7) -- Background color (semi-transparent black)
+        love.graphics.setColor(0, 0, 0, 0.7)
         love.graphics.rectangle("fill", love.graphics.getWidth() - 300, love.graphics.getHeight() - 80, 280, 60)
-        love.graphics.setColor(1, 1, 1, 1)   -- Text color (white)
+        love.graphics.setColor(1, 1, 1, 1)
         love.graphics.setFont(self.toast.font)
         love.graphics.printf(self.toast.message, love.graphics.getWidth() - 300, love.graphics.getHeight() - 64, 280,
             "center")

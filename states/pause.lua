@@ -9,10 +9,6 @@ function pause:init()
     self.backBtn = love.graphics.newImage('assets/back-btn.png')
 end
 
-function pause:enter(from)
-    self.from = from -- Record the previous state
-end
-
 function pause:draw()
     love.graphics.draw(self.background, 0, 0)
 

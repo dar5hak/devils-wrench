@@ -97,7 +97,7 @@ function menu:update(dt)
     if self.hoveredControl == 'newGame' and not self.isTweening then
         self.isTweening = true
         local randomAngle = math.random(0, 2 * math.pi)
-        Timer.tween(randomAngle / 4, self, { buttonAngle = randomAngle }, 'linear', function()
+        Timer.tween(randomAngle / 8, self, { buttonAngle = randomAngle }, 'linear', function()
             self.isTweening = false
         end)
     end

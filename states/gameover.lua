@@ -4,7 +4,7 @@ local Gamestate = require('lib.hump.gamestate')
 local gameover = {}
 
 function gameover:init()
-    self.background = love.graphics.newImage('assets/background.png')
+    self.background = love.graphics.newImage('assets/background.jpg')
     self.text = love.graphics.newImage('assets/gameover-text.png')
     self.menuBtn = love.graphics.newImage('assets/gameover-menu-btn.png')
 end
@@ -42,7 +42,7 @@ function gameover:mousepressed(x, y, button)
     local menuBtnY = 480
 
     if button == 1 and x >= menuBtnX and x <= menuBtnX + self.menuBtn:getWidth() and
-       y >= menuBtnY and y <= menuBtnY + self.menuBtn:getHeight() then
+        y >= menuBtnY and y <= menuBtnY + self.menuBtn:getHeight() then
         Gamestate.pop()
     end
 end

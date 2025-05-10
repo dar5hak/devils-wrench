@@ -11,7 +11,6 @@ local pause = require('states.pause')
 require('map')
 
 function love.load()
-    love.graphics.setDefaultFilter("nearest", "nearest")
     Gamestate.registerEvents()
     Gamestate.switch(menu)
 end

@@ -6,7 +6,7 @@ local settingsManager = require('settingsManager')
 local settings = {}
 
 function settings:init()
-    self.background = love.graphics.newImage('assets/background.png')
+    self.background = love.graphics.newImage('assets/background.jpg')
     self.heading = love.graphics.newImage('assets/settings-heading.png')
     self.keySelectionBox = love.graphics.newImage('assets/key-selection-box.png')
     self.zoomSelectionBox = love.graphics.newImage('assets/zoom-selection-box.png')

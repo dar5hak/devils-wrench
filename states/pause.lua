@@ -4,7 +4,7 @@ local Gamestate = require('lib.hump.gamestate')
 local pause = {}
 
 function pause:init()
-    self.background = love.graphics.newImage('assets/background.png')
+    self.background = love.graphics.newImage('assets/background.jpg')
     self.text = love.graphics.newImage('assets/paused-text.png')
     self.backBtn = love.graphics.newImage('assets/back-btn.png')
 end
@@ -38,7 +38,7 @@ function pause:mousepressed(x, y, button)
     local backBtnY = 480
 
     if button == 1 and x >= backBtnX and x <= backBtnX + self.backBtn:getWidth() and
-       y >= backBtnY and y <= backBtnY + self.backBtn:getHeight() then
+        y >= backBtnY and y <= backBtnY + self.backBtn:getHeight() then
         Gamestate.pop()
     end
 end

@@ -8,7 +8,7 @@ local settings = require('states.settings')
 local menu = {}
 
 function menu:init()
-    self.background = love.graphics.newImage('assets/background.png')
+    self.background = love.graphics.newImage('assets/background.jpg')
     self.title = love.graphics.newImage('assets/title.png')
     self.newGameButtonBg = love.graphics.newImage('assets/new-game-btn-bg.png')
     self.newGameButton = love.graphics.newImage('assets/new-game-btn.png')

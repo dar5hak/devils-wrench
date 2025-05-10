@@ -18,6 +18,8 @@ local settingsManager = require('settingsManager')
 local game = {}
 
 function game:enter()
+    love.graphics.setDefaultFilter("nearest", "nearest")
+
     self.transitioningToVictory = false
     self.transitioningToGameOver = false
     self.transitionTimer = 0
@@ -95,6 +97,7 @@ function game:showToast(message)
 end
 
 function game:resume(previous)
+    love.graphics.setDefaultFilter("nearest", "nearest")
     self.gameMusic:play()
 end
 
@@ -138,15 +141,13 @@ function game:update(dt)
         elseif self.transitionTimer < 2 then
             self.player.y = self.player.y - 100 * dt
         else
-            self.gameMusic:stop()
-            Gamestate.switch(victory)
+            self:switchState(victory)
         end
         return
     elseif self.transitioningToGameOver then
         self.transitionTimer = self.transitionTimer + dt
         if self.transitionTimer > 2 then
-            self.gameMusic:stop()
-            Gamestate.switch(gameover)
+            self:switchState(gameover)
         end
         return
     end
@@ -238,8 +239,7 @@ end
 
 function game:keypressed(key)
     if key == 'space' then
-        self.gameMusic:pause()
-        Gamestate.push(pause)
+        self:pause()
     end
 end
 
@@ -249,6 +249,18 @@ function game:isWithinRoomBounds(x, y)
         self.tiles[y - 1][x - 1] == ' ' and self.tiles[y - 1][x + 1] == ' ' and
         self.tiles[y + 1][x - 1] == ' ' and self.tiles[y + 1][x + 1] == ' ' and
         self.tiles[y][x] == ' '
+end
+
+function game:switchState(state)
+    self.gameMusic:stop()
+    love.graphics.setDefaultFilter("linear", "linear")
+    Gamestate.switch(state)
+end
+
+function game:pause()
+    self.gameMusic:pause()
+    love.graphics.setDefaultFilter("linear", "linear")
+    Gamestate.push(pause)
 end
 
 return game

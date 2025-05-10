@@ -1,6 +1,7 @@
 local love = require('love')
 local Gamestate = require('lib.hump.gamestate')
 local Timer = require('lib.hump.timer')
+local iffy = require('lib.iffy.iffy')
 
 local game = require('states.game')
 local settings = require('states.settings')
@@ -15,6 +16,7 @@ function menu:init()
     self.settingsIcon = love.graphics.newImage('assets/settings-icon.png')
     self.exitIcon = love.graphics.newImage('assets/exit-icon.png')
     self.creditsIcon = love.graphics.newImage('assets/credits-icon.png')
+    self.blinkingEyes = love.graphics.newImage('assets/blinking-eyes.png')
 
     self.titleMusic = love.audio.newSource('assets/HaroldParanormalInstigatorTheme_Loopable.ogg', 'stream')
     self.titleMusic:setVolume(0.5)
@@ -26,10 +28,23 @@ function menu:init()
 
     self.hoveredControl = nil
 
+    iffy.newAtlas("blinking_eyes_atlas", "assets/blinking-eyes.png", "assets/blinking-eyes.csv")
+    self.blinkingEyesFrame = "eyes1"
+    self.blinkingEyesTimer = 0
+    self.blinkingEyesDuration = 1 / 3
+    self.newGameButtonX = (love.graphics.getWidth() - self.newGameButton:getWidth()) / 2
+    self.newGameButtonY = 348
+    self.blinkingEyesPosition = {
+        x = self.newGameButtonX + 170,
+        y = self.newGameButtonY + 45
+    }
+
     self:setupAnimations()
 end
 
 function menu:setupAnimations()
+    self:setupBlinkingAnimation()
+
     Timer.tween(3, self, { settingsIconAngle = 0.1 }, 'linear', function()
         Timer.tween(3, self, { settingsIconAngle = -0.1 }, 'linear')
     end)
@@ -55,6 +70,35 @@ function menu:setupAnimations()
     end)
 end
 
+function menu:setupBlinkingAnimation()
+    local baseX = self.newGameButtonX
+    local baseY = self.newGameButtonY
+
+    local function updateRandomPosition()
+        self.blinkingEyesPosition.x = baseX + love.math.random(40, 175)
+        self.blinkingEyesPosition.y = baseY + love.math.random(45, 60)
+    end
+
+    local function blink()
+        Timer.after(0.2, function()
+            self.blinkingEyesFrame = "eyes2"
+            Timer.after(0.2, function()
+                self.blinkingEyesFrame = "eyes3"
+                Timer.after(1, function()
+                    self.blinkingEyesFrame = "eyes2"
+                    Timer.after(0.2, function()
+                        self.blinkingEyesFrame = "eyes1"
+                        updateRandomPosition()
+                        Timer.after(4, blink)
+                    end)
+                end)
+            end)
+        end)
+    end
+
+    Timer.after(3, blink)
+end
+
 function menu:enter(previous)
     self.buttonAngle = 0
     Timer.tween(1, self, { buttonAngle = math.pi / 12 }, 'bounce')
@@ -69,11 +113,9 @@ function menu:update(dt)
     Timer.update(dt)
 
     local mouseX, mouseY = love.mouse.getPosition()
-    local newGameButtonX = (love.graphics.getWidth() - self.newGameButton:getWidth()) / 2
-    local newGameButtonY = 348
 
-    if mouseX >= newGameButtonX and mouseX <= newGameButtonX + self.newGameButton:getWidth() and
-        mouseY >= newGameButtonY and mouseY <= newGameButtonY + self.newGameButton:getHeight() then
+    if mouseX >= self.newGameButtonX and mouseX <= self.newGameButtonX + self.newGameButton:getWidth() and
+        mouseY >= self.newGameButtonY and mouseY <= self.newGameButtonY + self.newGameButton:getHeight() then
         self.hoveredControl = 'newGame'
     elseif mouseX >= 666 - self.settingsIcon:getWidth() / 2 and
         mouseX <= 666 + self.settingsIcon:getWidth() / 2 and
@@ -119,11 +161,17 @@ function menu:draw()
         creditsIconScale = 1.1
     end
 
-    local screenWidth = love.graphics.getDimensions()
-    local newGameButtonX = (screenWidth - self.newGameButton:getWidth()) / 2
+    local newGameButtonBgOffsetX, newGameButtonBgOffsetY = 14, 10
 
-    love.graphics.draw(self.newGameButtonBg, newGameButtonX, 348, 0, 1, 1, 14, 10)
-    love.graphics.draw(self.newGameButton, newGameButtonX, 348, self.buttonAngle, 1, 1, 14, 10)
+    love.graphics.draw(self.newGameButtonBg, self.newGameButtonX, self.newGameButtonY, 0, 1, 1, newGameButtonBgOffsetX,
+        newGameButtonBgOffsetY)
+
+    iffy.draw("blinking_eyes_atlas", self.blinkingEyesFrame, self.blinkingEyesPosition.x,
+        self.blinkingEyesPosition.y, 0, 1, 1, self.blinkingEyes:getWidth() / 2,
+        self.blinkingEyes:getHeight() / 2)
+
+    love.graphics.draw(self.newGameButton, self.newGameButtonX, self.newGameButtonY, self.buttonAngle, 1, 1, newGameButtonBgOffsetX,
+        newGameButtonBgOffsetY)
 
     love.graphics.draw(self.settingsIcon, 666, 541, self.settingsIconAngle, settingsIconScale, settingsIconScale, self.settingsIcon:getWidth() / 2,
         self.settingsIcon:getHeight() / 2)
@@ -145,9 +193,7 @@ end
 
 function menu:mousepressed(x, y, button)
     if button == 1 then
-        local newGameButtonX = (love.graphics.getWidth() - self.newGameButton:getWidth()) / 2
-        local newGameButtonY = 348
-        if x >= newGameButtonX and x <= newGameButtonX + self.newGameButton:getWidth() and y >= newGameButtonY and y <= newGameButtonY + self.newGameButton:getHeight() then
+        if x >= self.newGameButtonX and x <= self.newGameButtonX + self.newGameButton:getWidth() and y >= self.newGameButtonY and y <= self.newGameButtonY + self.newGameButton:getHeight() then
             self.titleMusic:stop()
             uiSelectEffect:play()
             Gamestate.push(game)

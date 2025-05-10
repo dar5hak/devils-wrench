@@ -24,6 +24,8 @@ function menu:init()
     self.exitIconAngle = 0
     self.creditsIconAngle = 0
 
+    self.hoveredControl = nil
+
     self:setupAnimations()
 end
 
@@ -65,25 +67,71 @@ end
 
 function menu:update(dt)
     Timer.update(dt)
+
+    local mouseX, mouseY = love.mouse.getPosition()
+    local newGameButtonX = (love.graphics.getWidth() - self.newGameButton:getWidth()) / 2
+    local newGameButtonY = 348
+
+    if mouseX >= newGameButtonX and mouseX <= newGameButtonX + self.newGameButton:getWidth() and
+        mouseY >= newGameButtonY and mouseY <= newGameButtonY + self.newGameButton:getHeight() then
+        self.hoveredControl = 'newGame'
+    elseif mouseX >= 666 - self.settingsIcon:getWidth() / 2 and
+        mouseX <= 666 + self.settingsIcon:getWidth() / 2 and
+        mouseY >= 541 - self.settingsIcon:getHeight() / 2 and
+        mouseY <= 541 + self.settingsIcon:getHeight() / 2 then
+        self.hoveredControl = 'settings'
+    elseif mouseX >= 750 - self.exitIcon:getWidth() / 2 and
+        mouseX <= 750 + self.exitIcon:getWidth() / 2 and
+        mouseY >= 543 - self.exitIcon:getHeight() / 2 and
+        mouseY <= 543 + self.exitIcon:getHeight() / 2 then
+        self.hoveredControl = 'exit'
+    elseif mouseX >= 60 - self.creditsIcon:getWidth() / 2 and
+        mouseX <= 60 + self.creditsIcon:getWidth() / 2 and
+        mouseY >= 543 - self.creditsIcon:getHeight() / 2 and
+        mouseY <= 543 + self.creditsIcon:getHeight() / 2 then
+        self.hoveredControl = 'credits'
+    else
+        self.hoveredControl = nil
+    end
+
+    if self.hoveredControl == 'newGame' and not self.isTweening then
+        self.isTweening = true
+        local randomAngle = math.random(0, 2 * math.pi)
+        Timer.tween(randomAngle / 4, self, { buttonAngle = randomAngle }, 'linear', function()
+            self.isTweening = false
+        end)
+    end
 end
 
 function menu:draw()
     love.graphics.draw(self.background, 0, 0)
+    love.graphics.draw(self.title, 134, 44)
+
+    local settingsIconScale = 1
+    local exitIconScale = 1
+    local creditsIconScale = 1
+
+    if self.hoveredControl == 'settings' then
+        settingsIconScale = 1.1
+    elseif self.hoveredControl == 'exit' then
+        exitIconScale = 1.1
+    elseif self.hoveredControl == 'credits' then
+        creditsIconScale = 1.1
+    end
 
     local screenWidth = love.graphics.getDimensions()
     local newGameButtonX = (screenWidth - self.newGameButton:getWidth()) / 2
 
-    love.graphics.draw(self.title, 134, 44)
-    love.graphics.draw(self.newGameButtonBg, newGameButtonX, 348)
-    love.graphics.draw(self.newGameButton, newGameButtonX, 348, self.buttonAngle, 1, 1, -2, 0)
+    love.graphics.draw(self.newGameButtonBg, newGameButtonX, 348, 0, 1, 1, 14, 10)
+    love.graphics.draw(self.newGameButton, newGameButtonX, 348, self.buttonAngle, 1, 1, 14, 10)
 
-    love.graphics.draw(self.settingsIcon, 666, 541, self.settingsIconAngle, 1, 1, self.settingsIcon:getWidth() / 2,
+    love.graphics.draw(self.settingsIcon, 666, 541, self.settingsIconAngle, settingsIconScale, settingsIconScale, self.settingsIcon:getWidth() / 2,
         self.settingsIcon:getHeight() / 2)
 
-    love.graphics.draw(self.exitIcon, 750, 543, self.exitIconAngle, 1, 1, self.exitIcon:getWidth() / 2,
+    love.graphics.draw(self.exitIcon, 750, 543, self.exitIconAngle, exitIconScale, exitIconScale, self.exitIcon:getWidth() / 2,
         self.exitIcon:getHeight() / 2)
 
-    love.graphics.draw(self.creditsIcon, 60, 543, self.creditsIconAngle, 1, 1, self.creditsIcon:getWidth() / 2,
+    love.graphics.draw(self.creditsIcon, 60, 543, self.creditsIconAngle, creditsIconScale, creditsIconScale, self.creditsIcon:getWidth() / 2,
         self.creditsIcon:getHeight() / 2)
 end
 

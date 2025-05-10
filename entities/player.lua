@@ -19,11 +19,42 @@ local Player = Class {
         self.animFrame = 1
         self.animDuration = 0.5 -- Switch frames every 0.5 seconds
         self.moving = false
+
+        -- Add a lives property to the Player class
+        self.lives = 3
+
+        -- Add properties to track invulnerability, its timer, and visibility for blinking effect
+        self.invulnerable = false
+        self.invulnerabilityTimer = 0
+        self.blinkTimer = 0
+        self.visible = true
     end,
 }
 
 function Player:update(dt)
     Entity.update(self, dt)
+
+    -- Handle invulnerability logic
+    if self.invulnerable then
+        self.invulnerabilityTimer = self.invulnerabilityTimer - dt
+
+        if self.invulnerabilityTimer > 1 then
+            -- First second: player is completely invisible
+            self.visible = false
+        else
+            -- Remaining time: player blinks every 0.25 seconds
+            self.blinkTimer = self.blinkTimer - dt
+            if self.blinkTimer <= 0 then
+                self.visible = not self.visible
+                self.blinkTimer = 0.25 -- Toggle visibility every 0.25 seconds
+            end
+        end
+
+        if self.invulnerabilityTimer <= 0 then
+            self.invulnerable = false
+            self.visible = true -- Ensure player is visible after invulnerability ends
+        end
+    end
 
     -- Update animation timer
     if self.moving then
@@ -39,8 +70,10 @@ function Player:update(dt)
 end
 
 function Player:draw()
-    local spriteName = self.currentAnim .. self.animFrame
-    iffy.draw("player_atlas", spriteName, self.x, self.y)
+    if self.visible then
+        local spriteName = self.currentAnim .. self.animFrame
+        iffy.draw("player_atlas", spriteName, self.x, self.y)
+    end
     Entity.draw(self)
 end
 

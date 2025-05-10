@@ -74,8 +74,8 @@ function Enemy:move(dt, world)
         local goalY = self.y + moveY
 
         local actualX, actualY, cols = world:move(self, goalX, goalY, function(item, other)
-            if other.type == 'wall' then
-                return 'slide'
+            if other.type == 'wall' or other.type == 'player' then
+                return 'slide' -- Prevent passing through by sliding along the player
             end
             return nil
         end)

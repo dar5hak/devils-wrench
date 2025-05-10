@@ -53,6 +53,7 @@ function game:enter()
         tile = love.graphics.newImage('assets/tile.png'),
         wall = love.graphics.newImage('assets/wall.png'),
         clockIcon = love.graphics.newImage('assets/clock-icon.png'),
+        playerLifeIndicator = love.graphics.newImage('assets/player-life-indicator.png'),
     }
 
     self.dungeon, self.tiles = map.generate()
@@ -226,11 +227,25 @@ function game:update(dt)
             local px, py, pw, ph = self.world:getRect(self.player)
             -- Allow 8 pixels of overlap before triggering collision
             if ex + 8 < px + pw - 8 and ex + ew - 8 > px + 8 and ey + 8 < py + ph - 8 and ey + eh - 8 > py + 8 then
-                if not self.transitioningToGameOver then
-                    self.transitioningToGameOver = true
-                    self.transitionTimer = 0
+                if not self.player.invulnerable then
+                    if self.player.lives > 1 then
+                        self.player.lives = self.player.lives - 1
+                        print("Player lives remaining: " .. self.player.lives)
+                        self.world:update(enemy, enemy.x, enemy.y)
+                        self.damageEffect:play()
+
+                        -- Trigger invulnerability and blinking effect
+                        self.player.invulnerable = true
+                        self.player.invulnerabilityTimer = 2
+                        self.player.blinkTimer = 0.5
+                    else
+                        if not self.transitioningToGameOver then
+                            self.transitioningToGameOver = true
+                            self.transitionTimer = 0
+                        end
+                    end
+                    return
                 end
-                return
             end
         end
     end
@@ -273,6 +288,12 @@ function game:draw()
     love.graphics.setColor(self.progressBar.color)
     love.graphics.rectangle("fill", self.progressBar.x, self.progressBar.y, self.progressBar.width, self.progressBar.height)
     love.graphics.setColor(1, 1, 1) -- Reset color to white
+
+    -- Draw player life indicators in the top-right corner
+    local lifeIndicatorWidth = self.sprites.playerLifeIndicator:getWidth()
+    for i = 1, self.player.lives do
+        love.graphics.draw(self.sprites.playerLifeIndicator, love.graphics.getWidth() - (i * (lifeIndicatorWidth + 5)), 10)
+    end
 
     -- Draw toast message if active
     if self.toast.message then

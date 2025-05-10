@@ -36,6 +36,8 @@ function game:enter()
     self.portalBeamUpEffect = love.audio.newSource('assets/portal-beam-up.wav', 'static')
     self.damageEffect = love.audio.newSource('assets/damage.wav', 'static')
     self.settingsUpdatedEffect = love.audio.newSource('assets/settings-updated.wav', 'static')
+    self.pauseEffect = love.audio.newSource('assets/pause.wav', 'static')
+    self.unpauseEffect = love.audio.newSource('assets/unpause.wav', 'static')
 
     self.sprites = {
         tile = love.graphics.newImage('assets/tile.png'),
@@ -103,6 +105,10 @@ end
 function game:resume(previous)
     love.graphics.setDefaultFilter("nearest", "nearest")
     self.gameMusic:play()
+
+    if previous == pause then
+        self.unpauseEffect:play()
+    end
 end
 
 function game:update(dt)
@@ -266,6 +272,7 @@ end
 
 function game:pause()
     self.gameMusic:pause()
+    self.pauseEffect:play()
     love.graphics.setDefaultFilter("linear", "linear")
     Gamestate.push(pause)
 end

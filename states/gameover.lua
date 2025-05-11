@@ -1,4 +1,3 @@
-local love = require('love')
 local Gamestate = require('lib.hump.gamestate')
 
 local gameover = {}

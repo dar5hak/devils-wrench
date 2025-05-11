@@ -1,4 +1,3 @@
-local love = require('love')
 local Camera = require('lib.hump.camera')
 local bump = require('lib.bump.bump')
 local Gamestate = require('lib.hump.gamestate')

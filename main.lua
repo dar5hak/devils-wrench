@@ -1,4 +1,4 @@
-local love = require('love')
+_G.love = require('love')
 local Gamestate = require('lib.hump.gamestate')
 
 local menu = require('states.menu')

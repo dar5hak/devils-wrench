@@ -1,4 +1,3 @@
-local love = require('love')
 local Gamestate = require('lib.hump.gamestate')
 local Timer = require('lib.hump.timer')
 local iffy = require('lib.iffy.iffy')

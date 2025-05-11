@@ -1,5 +1,3 @@
-local love = require('love')
-
 local keySettings = {
     arrows = { x = 132, y = 188, image = love.graphics.newImage('assets/keys-arrows.png'), up = 'up', down = 'down', left = 'left', right = 'right' },
     wasd = { x = 332, y = 188, image = love.graphics.newImage('assets/keys-wasd.png'), up = 'w', down = 's', left = 'a', right = 'd' },

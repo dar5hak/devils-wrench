@@ -1,4 +1,3 @@
-local love = require('love')
 local Class = require('lib.hump.class')
 
 local Entity = Class {

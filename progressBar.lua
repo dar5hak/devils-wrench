@@ -17,6 +17,7 @@ end
 
 function ProgressBar:draw()
     love.graphics.setColor(self.color)
+    love.graphics.rectangle("line", self.x, self.y, self.maxWidth, self.height)
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
     love.graphics.setColor(1, 1, 1)
 end

@@ -84,7 +84,7 @@ function menu:setupBlinkingAnimation()
             self.blinkingEyesFrame = "eyes2"
             Timer.after(0.2, function()
                 self.blinkingEyesFrame = "eyes3"
-                Timer.after(1, function()
+                Timer.after(2, function()
                     self.blinkingEyesFrame = "eyes2"
                     Timer.after(0.2, function()
                         self.blinkingEyesFrame = "eyes1"

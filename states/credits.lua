@@ -16,13 +16,11 @@ function credits:draw()
     local screenWidth, screenHeight = love.graphics.getDimensions()
     local textX = (screenWidth - self.text:getWidth()) / 2
     local textY = 58
-    local detailsX = (screenWidth - self.details:getWidth()) / 2
-    local detailsY = 190
     local backBtnX = (screenWidth - self.backBtn:getWidth()) / 2
     local backBtnY = screenHeight - self.backBtn:getHeight() - 40
 
     love.graphics.draw(self.text, textX, textY)
-    love.graphics.draw(self.details, detailsX, detailsY)
+    love.graphics.draw(self.details, 158, 180)
     love.graphics.draw(self.backBtn, backBtnX, backBtnY, -0.14)
 end
 

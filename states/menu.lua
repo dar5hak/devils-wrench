@@ -32,7 +32,7 @@ function menu:init()
     self.blinkingEyesFrame = "eyes1"
     self.blinkingEyesTimer = 0
     self.blinkingEyesDuration = 1 / 3
-    self.newGameButtonX = (love.graphics.getWidth() - self.newGameButton:getWidth()) / 2
+    self.newGameButtonX = 300
     self.newGameButtonY = 348
     self.blinkingEyesPosition = {
         x = self.newGameButtonX + 170,
@@ -75,7 +75,7 @@ function menu:setupBlinkingAnimation()
     local baseY = self.newGameButtonY
 
     local function updateRandomPosition()
-        self.blinkingEyesPosition.x = baseX + love.math.random(40, 175)
+        self.blinkingEyesPosition.x = baseX + love.math.random(40, 160)
         self.blinkingEyesPosition.y = baseY + love.math.random(45, 60)
     end
 

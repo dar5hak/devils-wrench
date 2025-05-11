@@ -123,6 +123,14 @@ function game:resume(previous)
     end
 end
 
+function game:startGameOverTransition()
+    if not self.transitioningToGameOver then
+        self.transitioningToGameOver = true
+        self.transitionTimer = 0
+        self:playDamageEffect()
+    end
+end
+
 function game:update(dt)
     self.timeElapsed = self.timeElapsed + dt
 
@@ -138,10 +146,7 @@ function game:update(dt)
     self.timeout = self.timeout - dt
     if self.timeout <= 0 then
         self.timeout = 0
-        if not self.transitioningToGameOver then
-            self.transitioningToGameOver = true
-            self.transitionTimer = 0
-        end
+        self:startGameOverTransition()
     end
 
     local progressRatio = self.timeout / self.max_timeout
@@ -178,7 +183,6 @@ function game:update(dt)
         return
     elseif self.transitioningToGameOver then
         self.audio.gameMusic:stop()
-        self.audio.damageEffect:play()
         self.transitionTimer = self.transitionTimer + dt
         if self.transitionTimer > 2 then
             self:switchState(gameover)
@@ -203,10 +207,7 @@ function game:update(dt)
     end
 
     if not self.player:move(goalX, goalY, dt, self.world) then
-        if not self.transitioningToGameOver then
-            self.transitioningToGameOver = true
-            self.transitionTimer = 0
-        end
+        self:startGameOverTransition()
         return
     end
 
@@ -221,16 +222,13 @@ function game:update(dt)
                     if self.player.lives > 1 then
                         self.player.lives = self.player.lives - 1
                         self.world:update(enemy, enemy.x, enemy.y)
-                        self.audio.damageEffect:play()
+                        self:playDamageEffect()
 
                         self.player.invulnerable = true
                         self.player.invulnerabilityTimer = 2
                         self.player.blinkTimer = 0.5
                     else
-                        if not self.transitioningToGameOver then
-                            self.transitioningToGameOver = true
-                            self.transitionTimer = 0
-                        end
+                        self:startGameOverTransition()
                     end
                     return
                 end
@@ -321,6 +319,13 @@ function game:pause()
     love.graphics.setDefaultFilter("linear", "linear")
     love.mouse.setVisible(true)
     Gamestate.push(pause)
+end
+
+function game:playDamageEffect()
+    if self.audio.damageEffect:isPlaying() then
+        self.audio.damageEffect:stop()
+    end
+    self.audio.damageEffect:play()
 end
 
 return game

@@ -20,9 +20,12 @@ local settingsManager = require('settingsManager')
 
 local game = {}
 
-function game:enter()
+function game:enter(previous, levelNumber)
     love.graphics.setDefaultFilter("nearest", "nearest")
     love.mouse.setVisible(false)
+
+    self.currentLevel = levelNumber or 1
+    self.maxLevels = 7
 
     self.transitioningToVictory = false
     self.transitioningToGameOver = false
@@ -30,7 +33,7 @@ function game:enter()
 
     self.timeElapsed = 0
     self.lastRandomize = 0
-    self.randomizeInterval = 30
+    self.randomizeInterval = math.max(10, 45 - (self.currentLevel * 5))
 
     self.max_timeout = 160
     self.timeout = self.max_timeout
@@ -89,7 +92,7 @@ function game:enter()
     self.enemies = {}
     self.items = {}
 
-    self.enemyCount = 40
+    self.enemyCount = 20 + (self.currentLevel * 5)
 
     for i = 1, self.enemyCount do
         local enemyTile
@@ -177,7 +180,11 @@ function game:update(dt)
         elseif self.transitionTimer < 2 then
             self.player.y = self.player.y - 100 * dt
         else
-            self:switchState(victory)
+            if self.currentLevel >= self.maxLevels then
+                self:switchState(victory)
+            else
+                self:switchState(require('states.level'), self.currentLevel + 1)
+            end
         end
         return
     elseif self.transitioningToGameOver then
@@ -306,10 +313,10 @@ function game:isWithinRoomBounds(x, y)
     return true
 end
 
-function game:switchState(state)
+function game:switchState(state, ...)
     love.graphics.setDefaultFilter("linear", "linear")
     love.mouse.setVisible(true)
-    Gamestate.switch(state)
+    Gamestate.switch(state, ...)
 end
 
 function game:pause()

@@ -5,7 +5,7 @@ local M = {}
 function M.generate()
     local mapWidth, mapHeight = 60, 60
     local changeDirectionMod = 20
-    local sparsenessMod = 80
+    local sparsenessMod = 70
     local deadEndRemovalMod = 99
     local numberOfRooms = 5
     local minRoomWidth = 5

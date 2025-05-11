@@ -30,7 +30,7 @@ function victory:keyreleased(key)
     if key == 'return' then
         self.music:stop()
         uiSelectEffect:play()
-        Gamestate.pop()
+        Gamestate.switch(require('states.menu'))
     end
 end
 
@@ -43,7 +43,7 @@ function victory:mousepressed(x, y, button)
         y >= menuBtnY and y <= menuBtnY + self.menuBtn:getHeight() then
         self.music:stop()
         uiSelectEffect:play()
-        Gamestate.pop()
+        Gamestate.switch(require('states.menu'))
     end
 end
 

@@ -186,7 +186,7 @@ function menu:keyreleased(key)
     if key == 'return' then
         self.titleMusic:stop()
         uiSelectEffect:play()
-        Gamestate.push(game)
+        Gamestate.switch(require('states.level'), 1)
     end
 end
 
@@ -195,7 +195,7 @@ function menu:mousepressed(x, y, button)
         if x >= self.newGameButtonX and x <= self.newGameButtonX + self.newGameButton:getWidth() and y >= self.newGameButtonY and y <= self.newGameButtonY + self.newGameButton:getHeight() then
             self.titleMusic:stop()
             uiSelectEffect:play()
-            Gamestate.push(game)
+            Gamestate.switch(require('states.level'), 1)
         end
 
         local settingsIconX = 666 - self.settingsIcon:getWidth() / 2

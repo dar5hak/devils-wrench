@@ -83,7 +83,7 @@ function game:enter()
     local portalTile
     repeat
         portalTile = roomTiles[love.math.random(#roomTiles)]
-    until helpers.isTileFarFromPlayer(portalTile, self.player, tileWidth, tileHeight, 20)
+    until helpers.isTileFarFromPlayer(portalTile, self.player, tileWidth, tileHeight, 30)
     self.portal = Portal((portalTile.x - 1) * tileWidth, (portalTile.y - 1) * tileHeight)
     self.world:add(self.portal, self.portal.x, self.portal.y, self.portal.width, self.portal.height)
 

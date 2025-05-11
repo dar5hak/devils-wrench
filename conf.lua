@@ -8,6 +8,7 @@ function love.conf(t)
     t.releases = {
         title = "The Devil’s Wrench",
         package = "the-devils-wrench",
+        identifier = "io.itch.weredroid.thedevilswrench",
         loveVersion = "11.5",
         version = "1.0",
         author = "Weredroid",

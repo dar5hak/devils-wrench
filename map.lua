@@ -2,7 +2,7 @@ local astray = require 'lib.astray.astray'
 
 local M = {}
 
-function M.generate(level)
+function M.generate()
     local mapWidth, mapHeight = 60, 60
     local changeDirectionMod = 20
     local sparsenessMod = 80
